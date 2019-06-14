@@ -1,19 +1,19 @@
 {
-  "name": "sebamaster-movie-backend",
+  "name": "studyhub-backend",
   "version": "1.0.0",
-  "description": "EBAMaster movie backend as a service",
+  "description": "Studyhub backend as a service",
   "main": "index.js",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebischair/sebamaster-movie-backend.git"
+    "url": "https://github.com/Mixermachine/StudyHub-backend.git"
   },
-  "author": "sebischair",
+  "author": "StudyHub Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sebischair/sebamaster-movie-backend/issues"
+    "url": "https://github.com/Mixermachine/StudyHub-backend/issues"
   },
-  "homepage": "ttps://github.com/sebischair/sebamaster-movie-backend.git#readme",
+  "homepage": "https://github.com/Mixermachine/StudyHub-backend",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "start": "node ./index.js",
@@ -25,7 +25,8 @@
     "express": "4.16.2",
     "helmet": "3.11.0",
     "jsonwebtoken": "8.1.1",
-    "mongoose": "5.0.7"
+    "sequelize": "^5.8.9",
+    "sequelize-cli": "^5.5.0"
   },
   "devDependencies": {
     "nodemon": "1.14.12"
