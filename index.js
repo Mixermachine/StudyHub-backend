@@ -1,10 +1,10 @@
 "use strict";
 
-const http       = require('http');
-const mongoose   = require('mongoose');
+const http = require('http');
 
 const api        = require('./src/api');
 const config     = require('./src/config');
+const db = require('./src/db');
 
 
 // Set the port to the API.
@@ -13,15 +13,9 @@ api.set('port', config.port);
 //Create a http server based on Express
 const server = http.createServer(api);
 
-
-//Connect to the MongoDB database; then start the server
-mongoose
-    .connect(config.mongoURI)
-    .then(() => server.listen(config.port))
-    .catch(err => {
-        console.log('Error connecting to the database', err.message);
-        process.exit(err.statusCode);
-    });
+// Fire up sequelize for database connection and synchronize database schema
+db.sequelize.sync()
+    .then(server.listen(config.port));
 
 
 server.on('listening', () => {

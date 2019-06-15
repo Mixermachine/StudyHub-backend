@@ -1,5 +1,5 @@
 "use strict";
-
+/*
 const MovieModel = require('../models/movie');
 
 
@@ -82,3 +82,5 @@ module.exports = {
     remove,
     list
 };
+
+ */
