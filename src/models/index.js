@@ -5,7 +5,7 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config_sequelize = require(__dirname + '/../config/config_sequelize.json')[env];
+const config_sequelize = require(__dirname + '/../../config/config_sequelize.json')[env];
 const db = {};
 
 let sequelize;
@@ -31,8 +31,8 @@ sequelize
         throw "Database connection could not be established. Profile: " + env;
     });
 
-// Load db model
-let modelsDir = __dirname + '/models';
+// Load index model
+let modelsDir = __dirname;
 fs
     .readdirSync(modelsDir)
     .filter(file => {
