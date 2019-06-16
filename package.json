@@ -26,10 +26,10 @@
     "express": "4.16.2",
     "helmet": "3.11.0",
     "jsonwebtoken": "8.1.1",
-    "sequelize": "^5.8.9",
-    "sequelize-cli": "^5.5.0",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
+    "sequelize": "^5.8.9",
+    "sequelize-cli": "^5.5.0",
     "sqlite3": "^4.0.9"
   },
   "devDependencies": {
