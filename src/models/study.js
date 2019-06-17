@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
         description: DataTypes.STRING,
         prerequisites: DataTypes.STRING,
         capacity: DataTypes.INTEGER,
-        keywords: DataTypes.STRING,
         location: DataTypes.STRING
     }, {
         timestamps: false
@@ -22,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         });
 
         Study.hasMany(models.PaymentTransaction, {
+            foreignKey: 'studyId'
+        });
+
+        Study.hasMany(models.StudyKeyword, {
             foreignKey: 'studyId'
         });
 
