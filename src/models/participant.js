@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'participantId'
         });
 
-        Participant.hasMany(models.PayoutTransactions, {
+        Participant.hasMany(models.PayoutTransaction, {
             foreignKey: 'participantId'
         });
 

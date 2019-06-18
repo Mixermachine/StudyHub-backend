@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     Study.associate = function (models) {
         // associations can be defined here
 
-        Study.hasMany(models.PayoutTransactions, {
+        Study.hasMany(models.PayoutTransaction, {
             foreignKey: 'studyId'
         });
 
