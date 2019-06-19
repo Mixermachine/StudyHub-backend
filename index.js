@@ -2,9 +2,9 @@
 
 const http = require('http');
 
-const api        = require('./src/api');
-const config     = require('./src/config');
-const db = require('./src/db');
+const api = require('./src/api');
+const config = require('./src/config');
+const db = require('./src/models');
 
 
 // Set the port to the API.

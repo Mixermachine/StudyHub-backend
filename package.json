@@ -18,7 +18,8 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "start": "node ./index.js",
     "devstart": "nodemon ./index.js",
-    "sequelize": "sequelize --options-path=config/sequelize_init.js"
+    "sequelize": "sequelize --options-path=config/sequelize_init.js",
+    "generate_db": "sequelize --options-path=config/sequelize_init.js db:create"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
@@ -30,7 +31,9 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.8.9",
     "sequelize-cli": "^5.5.0",
-    "sqlite3": "^4.0.9"
+    "sqlite3": "^4.0.9",
+    "swagger-jsdoc": "^3.2.9",
+    "swagger-ui-express": "^4.0.6"
   },
   "devDependencies": {
     "nodemon": "1.14.12"
