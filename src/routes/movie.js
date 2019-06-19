@@ -1,5 +1,5 @@
 "use strict";
-
+/*
 const express  = require('express');
 const router   = express.Router();
 
@@ -14,4 +14,4 @@ router.put('/:id', middlewares.checkAuthentication, MovieController.update); // 
 router.delete('/:id', middlewares.checkAuthentication, MovieController.remove); // Delete a movie by Id
 
 
-module.exports = router;
+module.exports = router;*/

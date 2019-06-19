@@ -1,22 +1,26 @@
-"use strict";
-
-const mongoose = require('mongoose');
-
-// Define the user schema
-
-const UserSchema  = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true,
-        unique: true
-    }
-});
-
-UserSchema.set('versionKey', false);
-
-// Export the Movie model
-module.exports = mongoose.model('User', UserSchema);
+'use strict';
+module.exports = (sequelize, DataTypes) => {
+    const User = sequelize.define('User', {
+        // primaryKey id will be auto generated
+        firstName: DataTypes.STRING,
+        lastName: DataTypes.STRING,
+        DoB: DataTypes.DATE,
+        gender: DataTypes.CHAR,
+        email: DataTypes.STRING
+    }, {
+        timestamps: false
+    });
+    User.associate = function (models) {
+        // associations can be defined here
+        User.hasOne(models.Creator, {
+            foreignKey: 'userId'
+        });
+        User.hasOne(models.Payee, {
+            foreignKey: 'userId'
+        });
+        User.hasOne(models.Participant, {
+            foreignKey: 'userId'
+        })
+    };
+    return User;
+};
