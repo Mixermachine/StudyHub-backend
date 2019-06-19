@@ -18,8 +18,7 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "start": "node ./index.js",
     "devstart": "nodemon ./index.js",
-    "sequelize": "sequelize --options-path=config/sequelize_init.js",
-    "generate_db": "sequelize --options-path=config/sequelize_init.js db:create"
+    "generate_db": "sequelize db:create"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
