@@ -1,13 +1,13 @@
 "use strict";
 
-const jwt        = require('jsonwebtoken');
-const bcrypt     = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-const config     = require('../config');
-const UserModel  = require('../models/user');
+const config = require('../config');
+const UserModel = require('../models/user');
 
 
-const login = (req,res) => {
+const login = (req, res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body must contain a password property'
@@ -23,11 +23,11 @@ const login = (req,res) => {
 
             // check if the password is valid
             const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
-            if (!isPasswordValid) return res.status(401).send({token: null });
+            if (!isPasswordValid) return res.status(401).send({token: null});
 
             // if user is found and password is valid
             // create a token
-            const token = jwt.sign({ id: user._id, username: user.username }, config.JwtSecret, {
+            const token = jwt.sign({id: user._id, username: user.username}, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
@@ -42,7 +42,7 @@ const login = (req,res) => {
 };
 
 
-const register = (req,res) => {
+const register = (req, res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body must contain a password property'
@@ -61,7 +61,7 @@ const register = (req,res) => {
 
             // if user is registered without errors
             // create a token
-            const token = jwt.sign({ id: user._id, username: user.username }, config.JwtSecret, {
+            const token = jwt.sign({id: user._id, username: user.username}, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
@@ -70,13 +70,12 @@ const register = (req,res) => {
 
         })
         .catch(error => {
-            if(error.code == 11000) {
+            if (error.code == 11000) {
                 res.status(400).json({
                     error: 'User exists',
                     message: error.message
                 })
-            }
-            else{
+            } else {
                 res.status(500).json({
                     error: 'Internal server error',
                     message: error.message
@@ -105,7 +104,7 @@ const me = (req, res) => {
 };
 
 const logout = (req, res) => {
-    res.status(200).send({ token: null });
+    res.status(200).send({token: null});
 };
 
 

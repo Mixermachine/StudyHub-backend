@@ -1,8 +1,8 @@
 "use strict";
 
-const jwt    = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-const config = require ('./config');
+const config = require('./config');
 
 const allowCrossDomain = (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -12,8 +12,7 @@ const allowCrossDomain = (req, res, next) => {
     // intercept OPTIONS method
     if ('OPTIONS' == req.method) {
         res.status(200).send(200);
-    }
-    else {
+    } else {
         next();
     }
 };
@@ -21,8 +20,8 @@ const allowCrossDomain = (req, res, next) => {
 const checkAuthentication = (req, res, next) => {
 
     // check header or url parameters or post parameters for token
-    let token = ""
-    if(req.headers.authorization) {
+    let token = "";
+    if (req.headers.authorization) {
         token = req.headers.authorization.substring(4);
     }
 
@@ -52,7 +51,7 @@ const errorHandler = (err, req, res, next) => {
         return next(err)
     }
     res.status(500);
-    res.render('error', { error: err })
+    res.render('error', {error: err})
 };
 
 

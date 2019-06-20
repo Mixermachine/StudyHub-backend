@@ -59,6 +59,7 @@ const userController = require('../controllers/user');
  *         description: not all fields provided
  */
 router.post('/', userController.create);
+//router.get('/', userController.get)
 //router.get('/:id', userController.read); // Read a movie by Id
 //router.put('/:id', middlewares.checkAuthentication, userController.update); // Update a movie by Id
 
