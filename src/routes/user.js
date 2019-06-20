@@ -29,6 +29,7 @@ const userController = require('../controllers/user');
  *             - DoB
  *             - gender
  *             - email
+ *             - password
  *           properties:
  *             firstName:
  *               type: string
@@ -41,12 +42,15 @@ const userController = require('../controllers/user');
  *               type: string
  *             email:
  *               type: string
+ *             password:
+ *               type: string
  *           example: {
  *             "firstName": "John",
  *             "lastName": "Doe",
  *             "DoB": "1993-01-01",
  *             "gender": "f",
- *             "email": "invalid@invalid.com"
+ *             "email": "invalid@invalid.com",
+ *             "password": "123"
  *           }
  *     responses:
  *       200:
