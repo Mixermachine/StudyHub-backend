@@ -1,0 +1,23 @@
+{
+  "development": {
+    "port": 3000,
+    "jwtSecret": "213sdkvfjsufhwezufghauifhiqhrui12hui1hui3h1",
+    "logger": {
+      "logLevel": "debug"
+    }
+  },
+  "test": {
+    "port": 3000,
+    "jwtSecret": "213sdkvfjsufhwezufghauifhiqhrui12hui1hui3h1",
+    "logger": {
+      "logLevel": "debug"
+    }
+  },
+  "production": {
+    "port": 3000,
+    "jwtSecret": "213sdkvfjsufhwezufghauifhiqhrui12hui1hui3h1",
+    "logger": {
+      "logLevel": "info"
+    }
+  }
+}
