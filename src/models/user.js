@@ -4,10 +4,12 @@ module.exports = (sequelize, DataTypes) => {
         // primaryKey id will be auto generated
         firstName: DataTypes.STRING,
         lastName: DataTypes.STRING,
-        DoB: DataTypes.DATE,
+        DoB: DataTypes.DATEONLY,
         gender: DataTypes.CHAR,
         pwHash: DataTypes.STRING,
-        email: DataTypes.STRING
+        email: DataTypes.STRING,
+        createdOn: DataTypes.DATE,
+        modifiedOn: DataTypes.DATE
     }, {
         timestamps: false
     });
