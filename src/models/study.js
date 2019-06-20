@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         description: DataTypes.STRING,
         prerequisites: DataTypes.STRING,
         capacity: DataTypes.INTEGER,
-        location: DataTypes.STRING,
+        location: DataTypes.STRING(500),
         published: DataTypes.BOOLEAN
     }, {
         timestamps: false
