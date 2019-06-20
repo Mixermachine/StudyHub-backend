@@ -3,6 +3,7 @@ const models = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
+const logger = require('./../logger');
 
 const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) return res.status(400).json({
@@ -54,6 +55,8 @@ const create = async (req, res) => {
         .then(res.status(200).send())
         .catch(error => sendJsonResponse(res, 500, "Internal server error",
             env === 'development' ? error.message : "Request failed"));
+
+    logger.info("Created user " + valuesDict['email']);
 };
 
 const sendJsonResponse = function (res, code, error, message) {

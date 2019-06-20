@@ -1,10 +1,6 @@
 "use strict";
-
-//Configuration variables
-const port = process.env.PORT || '3000';
-const JwtSecret = process.env.JWT_SECRET || 'very secret secret';
+const config = require(__dirname + '/../config/config.json')[process.env.NODE_ENV || 'development'];
 
 module.exports = {
-    port,
-    JwtSecret,
+    config
 };
