@@ -25,12 +25,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         });
 
-        // Many to Many connection to study
-        Participant.belongsToMany(models.Study, {
-            foreignKey: 'participantId',
-            through: 'StudyParticipants'
-        });
-
         Participant.belongsTo(models.User, {
             foreignKey: 'userId'
         });

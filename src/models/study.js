@@ -2,10 +2,12 @@
 module.exports = (sequelize, DataTypes) => {
     const Study = sequelize.define('Study', {
         // primaryKey id will be auto generated
+        title: DataTypes.STRING,
         description: DataTypes.STRING,
         prerequisites: DataTypes.STRING,
         capacity: DataTypes.INTEGER,
-        location: DataTypes.STRING
+        location: DataTypes.STRING,
+        published: DataTypes.BOOLEAN
     }, {
         timestamps: false
     });
@@ -26,12 +28,6 @@ module.exports = (sequelize, DataTypes) => {
 
         Study.hasMany(models.StudyKeyword, {
             foreignKey: 'studyId'
-        });
-
-        // Many to Many connection to participant
-        Study.belongsToMany(models.Participant, {
-            foreignKey: 'studyId',
-            through: 'StudyParticipants'
         });
 
         Study.belongsTo(models.Payee, {
