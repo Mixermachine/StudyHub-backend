@@ -13,94 +13,29 @@ const login = (req, res) => {
         message: 'The request body must contain a password property'
     });
 
-    if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'email')) return res.status(400).json({
         error: 'Bad Request',
-        message: 'The request body must contain a username property'
+        message: 'The request body must contain a email property'
     });
 
-    UserModel.findOne({username: req.body.username}).exec()
+    models.User.findOne({where: {email: req.body.email}})
         .then(user => {
-
             // check if the password is valid
-            const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
+            const isPasswordValid = bcrypt.compareSync(req.body.password, user.pwHash);
             if (!isPasswordValid) return res.status(401).send({token: null});
 
             // if user is found and password is valid
             // create a token
-            const token = jwt.sign({id: user._id, username: user.username}, config.JwtSecret, {
+            const token = jwt.sign({email: user.email}, config.jwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
-            res.status(200).json({token: token});
+            res.status(200).json({token: token})
 
-        })
-        .catch(error => res.status(404).json({
-            error: 'User Not Found',
-            message: error.message
-        }));
-
-};
-
-
-const register = (req, res) => {
-    if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
-        error: 'Bad Request',
-        message: 'The request body must contain a password property'
-    });
-
-    if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
-        error: 'Bad Request',
-        message: 'The request body must contain a username property'
-    });
-
-    const user = Object.assign(req.body, {password: bcrypt.hashSync(req.body.password, 8)});
-
-
-    UserModel.create(user)
-        .then(user => {
-
-            // if user is registered without errors
-            // create a token
-            const token = jwt.sign({id: user._id, username: user.username}, config.JwtSecret, {
-                expiresIn: 86400 // expires in 24 hours
-            });
-
-            res.status(200).json({token: token});
-
-
-        })
-        .catch(error => {
-            if (error.code == 11000) {
-                res.status(400).json({
-                    error: 'User exists',
-                    message: error.message
-                })
-            } else {
-                res.status(500).json({
-                    error: 'Internal server error',
-                    message: error.message
-                })
-            }
-        });
-
-};
-
-
-const me = (req, res) => {
-    UserModel.findById(req.userId).select('username').exec()
-        .then(user => {
-
-            if (!user) return res.status(404).json({
-                error: 'Not Found',
-                message: `User not found`
-            });
-
-            res.status(200).json(user)
-        })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+        }).catch(reason => res.status(404).json({
+        error: 'User not found',
+        message: reason.message
+    }));
 };
 
 const logout = (req, res) => {
@@ -110,7 +45,5 @@ const logout = (req, res) => {
 
 module.exports = {
     login,
-    register,
     logout,
-    me
 };

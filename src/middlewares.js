@@ -22,7 +22,15 @@ const checkAuthentication = (req, res, next) => {
     // check header or url parameters or post parameters for token
     let token = "";
     if (req.headers.authorization) {
-        token = req.headers.authorization.substring(4);
+        const auth = req.headers.authorization.split(' ');
+        if (auth[0] != 'Bearer') {
+            return res.status(400).send({
+                error: 'Bad request',
+                message: 'Only accepting Bearer authorization. authorization header was not prefixed with Bearer'
+            });
+        } else {
+            token = auth[1];
+        }
     }
 
     if (!token)
@@ -32,14 +40,15 @@ const checkAuthentication = (req, res, next) => {
         });
 
     // verifies secret and checks exp
-    jwt.verify(token, config.JwtSecret, (err, decoded) => {
+    const secret = config.jwtSecret;
+    jwt.verify(token, secret, (err, decoded) => {
         if (err) return res.status(401).send({
             error: 'Unauthorized',
             message: 'Failed to authenticate token.'
         });
 
         // if everything is good, save to request for use in other routes
-        req.userId = decoded.id;
+        req.email = decoded.email;
         next();
     });
 
