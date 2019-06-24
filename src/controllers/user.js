@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const models = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const bcrypt = require('bcryptjs');
@@ -59,6 +58,10 @@ const create = async (req, res) => {
     logger.info("Created user " + valuesDict['email']);
 };
 
+const get = async (req, res) => {
+    sendJsonResponse(res, 500, "Not implemented", "This call is not yet implemented")
+};
+
 const sendJsonResponse = function (res, code, error, message) {
     res.status(code).json({
         error: error,
@@ -67,5 +70,6 @@ const sendJsonResponse = function (res, code, error, message) {
 };
 
 module.exports = {
-    create
+    create,
+    get
 };
