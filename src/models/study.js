@@ -6,7 +6,12 @@ module.exports = (sequelize, DataTypes) => {
         description: DataTypes.STRING,
         prerequisites: DataTypes.STRING,
         capacity: DataTypes.INTEGER,
-        location: DataTypes.STRING(500),
+        country: DataTypes.STRING,
+        city: DataTypes.STRING,
+        zip: DataTypes.STRING,
+        street: DataTypes.STRING,
+        number: DataTypes.STRING,
+        additionalLocationInfo: DataTypes.STRING,
         published: DataTypes.BOOLEAN
     }, {
         timestamps: false

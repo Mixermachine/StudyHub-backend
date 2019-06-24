@@ -71,7 +71,6 @@ const userController = require('../controllers/user');
 //TODO: put update user, only what is submitted
 //TODO: search
 router.post('/', userController.create);
-
 /**
  * @swagger
  *
@@ -91,8 +90,8 @@ router.post('/', userController.create);
  *       501:
  *         description: not all fields provided
  */
-
 router.get('/', middlewares.checkAuthentication, userController.get);
+
 //router.get('/', userController.get);
 //router.get('/:id', userController.read); // Read a movie by Id
 //router.put('/:id', middlewares.checkAuthentication, userController.update); // Update a movie by Id
