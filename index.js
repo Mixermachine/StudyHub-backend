@@ -3,7 +3,7 @@
 const http = require('http');
 
 const api = require('./src/api');
-const config = require('./src/config');
+const config = require('./src/config').config;
 const db = require('./src/models');
 
 

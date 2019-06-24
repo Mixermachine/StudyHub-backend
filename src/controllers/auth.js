@@ -3,8 +3,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const config = require('../config');
-const UserModel = require('../models/user');
+const config = require('../config').config;
+const models = require('../models');
 
 
 const login = (req, res) => {
