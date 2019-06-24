@@ -1,21 +1,21 @@
 {
   "development": {
     "port": 3000,
-    "jwtSecret": "213sdkvfjsufhwezufghauifhiqhrui12hui1hui3h1",
+    "jwtSecret": "a9039c7861e46cc8d94ab5733bc82f8d53e2cd886d8ccc48a5d3602ae859ea85",
     "logger": {
       "logLevel": "debug"
     }
   },
   "test": {
     "port": 3000,
-    "jwtSecret": "213sdkvfjsufhwezufghauifhiqhrui12hui1hui3h1",
+    "jwtSecret": "f8bd166f8d66e1217feb4c12a0fcdc65136f9ff6e25c8b087a1ce87e93416cfb",
     "logger": {
       "logLevel": "debug"
     }
   },
   "production": {
     "port": 3000,
-    "jwtSecret": "213sdkvfjsufhwezufghauifhiqhrui12hui1hui3h1",
+    "jwtSecret": "4311ab21fbd516d09a5abb8896cd65dfd7cb46762c7022eaa84e26a176beca99",
     "logger": {
       "logLevel": "info"
     }
