@@ -59,6 +59,12 @@ const create = async (req, res) => {
     logger.info("Created user " + valuesDict['email']);
 };
 
+const get = async (req, res) => {
+    req.userId
+
+    return new json();
+}
+
 const sendJsonResponse = function (res, code, error, message) {
     res.status(code).json({
         error: error,

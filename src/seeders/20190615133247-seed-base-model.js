@@ -72,12 +72,12 @@ module.exports = {
                 description: 'Experiment on the beneficial effect of electric fans in extreme heat and humidity.',
                 prerequisites: 'None',
                 capacity: '25',
-                location: '{\n' +
-                    '  "country": "DE",\n' +
-                    '  "city": "Garching",\n' +
-                    '  "zip": "85748",\n' +
-                    '  "street": "Bolzmannstr.",\n' +
-                    '  "number": "3",\n' +
+                country: 'DE',
+                city: 'Garching',
+                zip: '85748',
+                street: 'Bolzmannstraße',
+                number: '3',
+                additionalLocationInfo: '{\n' +
                     '  "room": "03.10.011"\n' +
                     '}',
                 published: 'true',
