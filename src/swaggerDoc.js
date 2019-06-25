@@ -3,13 +3,25 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {
     swaggerDefinition: {
+        openapi: '3.0.2',
         info: {
             title: 'StudyHub Backend API',
             version: '0.0.1',
             description: 'Get the good stuff'
         },
         host: 'localhost:3000',
-        basePath: '/'
+        basePath: '/',
+        components: {
+            securitySchemes: {
+                BearerAuth: {
+                    type: 'http',
+                    name: 'Authorization',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    in: 'header'
+                }
+            }
+        }
     },
     apis: ['./**/routes/*.js']
 };
