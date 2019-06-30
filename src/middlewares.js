@@ -17,42 +17,65 @@ const allowCrossDomain = (req, res, next) => {
     }
 };
 
-const checkAuthentication = (req, res, next) => {
+const checkAuthentication = (req, res, next) => innerCheckAuthentication(req, res, next, true);
+const checkAuthenticationOptional = (req, res, next) => innerCheckAuthentication(req, res, next, false);
+
+const innerCheckAuthentication = (req, res, next, sendError) => {
+    req.auth = false;
 
     // check header or url parameters or post parameters for token
     let token = "";
     if (req.headers.authorization) {
         const auth = req.headers.authorization.split(' ');
-        if (auth[0] != 'Bearer') {
-            return res.status(400).send({
-                error: 'Bad request',
-                message: 'Only accepting Bearer authorization. authorization header was not prefixed with Bearer'
-            });
+        if (auth[0] !== 'Bearer') {
+            if (sendError) {
+                return res.status(400).send({
+                    error: 'Bad request',
+                    message: 'Only accepting Bearer authorization. authorization header was not prefixed with Bearer'
+                });
+            } else {
+                next();
+                return
+            }
+
         } else {
             token = auth[1];
         }
     }
 
     if (!token)
-        return res.status(401).send({
-            error: 'Unauthorized',
-            message: 'No token provided in the request'
-        });
+        if (sendError) {
+            return res.status(401).send({
+                error: 'Unauthorized',
+                message: 'No token provided in the request'
+            });
+        } else {
+            next();
+            return
+        }
+
 
     // verifies secret and checks exp
     const secret = config.jwtSecret;
     jwt.verify(token, secret, (err, decoded) => {
-        if (err) return res.status(401).send({
-            error: 'Unauthorized',
-            message: 'Failed to authenticate token.'
-        });
+        if (err) {
+            if (sendError) {
+                return res.status(401).send({
+                    error: 'Unauthorized',
+                    message: 'Failed to authenticate token.'
+                });
+            } else {
+                next();
+                return
+            }
+        }
 
         // if everything is good, save to request for use in other routes
+        req.auth = true;
+        req.id = decoded.id;
         req.email = decoded.email;
         next();
     });
-
-
 };
 
 const errorHandler = (err, req, res, next) => {
@@ -67,5 +90,6 @@ const errorHandler = (err, req, res, next) => {
 module.exports = {
     allowCrossDomain,
     checkAuthentication,
+    checkAuthenticationOptional,
     errorHandler
 };
