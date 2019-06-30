@@ -15,4 +15,4 @@ const sendJsonResponse = function (res, code, error, message) {
 
 module.exports = {
     sendJsonResponse
-}
+};
