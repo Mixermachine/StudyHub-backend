@@ -26,7 +26,7 @@ const login = (req, res) => {
 
             // if user is found and password is valid
             // create a token
-            const token = jwt.sign({email: user.email}, config.jwtSecret, {
+            const token = jwt.sign({id: user.id, email: user.email}, config.jwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 

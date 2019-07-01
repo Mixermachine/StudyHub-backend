@@ -3,6 +3,7 @@ const env = process.env.NODE_ENV || 'development';
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const logger = require('./../logger');
+const helper = require('./helper')
 
 const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) return res.status(400).json({
@@ -31,14 +32,14 @@ const create = async (req, res) => {
 
     // Return 400 and break if not all provided
     if (incomplete) {
-        sendJsonResponse(res, 400, "Malformed request", "Not all fields provided");
+        helper.sendJsonResponse(res, 400, "Malformed request", "Not all fields provided");
         return;
     }
 
     // Check if email of new user already exists in database
     if (await models.User.count({where: {email: valuesDict['email']}})) {
         // Return conflict as email already exists
-        sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
+        helper.sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
         return;
     }
 
@@ -52,21 +53,14 @@ const create = async (req, res) => {
     // Add new user into database
     models.User.create(valuesDict)
         .then(res.status(200).send())
-        .catch(error => sendJsonResponse(res, 500, "Internal server error",
+        .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
             env === 'development' ? error.message : "Request failed"));
 
     logger.info("Created user " + valuesDict['email']);
 };
 
 const get = async (req, res) => {
-    sendJsonResponse(res, 500, "Not implemented", "This call is not yet implemented")
-};
-
-const sendJsonResponse = function (res, code, error, message) {
-    res.status(code).json({
-        error: error,
-        message: message
-    });
+    helper.sendJsonResponse(res, 500, "Not implemented", "This call is not yet implemented");
 };
 
 module.exports = {
