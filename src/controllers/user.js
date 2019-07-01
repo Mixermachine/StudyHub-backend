@@ -67,7 +67,7 @@ const get = async (req, res) => {
     }
 
     models.User.findByPk(id, {
-        attributes: ['firstName', 'lastName', 'DoB', 'gender', 'email', 'createdOn', 'modifiedOn']
+        attributes: ['id', 'firstName', 'lastName', 'DoB', 'gender', 'email', 'createdOn', 'modifiedOn']
     }).then(user => {
         if (!user) {
             return helper.sendJsonResponse(res, 404, "Not found",
@@ -75,7 +75,7 @@ const get = async (req, res) => {
         }
 
         // email should only be visible to user who is logged in
-        if (!(req.auth && req.id === id)) {
+        if (!(req.auth && req.id === user.id)) {
             user.email = "hidden";
         }
 
@@ -106,7 +106,7 @@ const put = async (req, res) => {
     }
 
     // check authentication
-    if (!(req.auth && req.id === id)) {
+    if (!(req.auth && req.id == id)) {
         return helper.sendJsonResponse(res, 401, "Authentication error",
             "You must be logged in to change your user data");
     }

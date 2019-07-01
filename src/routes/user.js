@@ -307,6 +307,9 @@ router.post('/participant', middlewares.checkAuthentication, participantControll
  *   put:
  *     description: Change data of a user
  *     tags: [User]
+ *     security:
+ *       - {}
+ *       - BearerAuth: []
  *     consumes:
  *       - application/json
  *     produces:
