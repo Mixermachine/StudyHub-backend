@@ -3,7 +3,7 @@ const env = process.env.NODE_ENV || 'development';
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const logger = require('./../logger');
-const helper = require('./helper')
+const helper = require('./helper');
 
 const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) return res.status(400).json({
