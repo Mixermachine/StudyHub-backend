@@ -74,17 +74,26 @@ const participantController = require('../controllers/participant');
 //TODO: put update user, only what is submitted
 //TODO: search
 router.post('/', userController.create);
+
 /**
  * @swagger
  *
- * /user/:
+ * /user/{id}:
  *   get:
- *     description: Get profile of signed in user
+ *     description: Get data of user. With optional authentication the email will be provided.
  *     tags: [User]
  *     security:
+ *     - {}
  *     - BearerAuth: []
  *     produces:
  *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *         description: created
@@ -93,7 +102,7 @@ router.post('/', userController.create);
  *       501:
  *         description: not all fields provided
  */
-router.get('/', middlewares.checkAuthentication, userController.get);
+router.get('/:id', middlewares.checkAuthenticationOptional, userController.get);
 
 /**
  * @swagger
@@ -290,5 +299,60 @@ router.get('/participant/:id', middlewares.checkAuthentication, participantContr
  */
 router.post('/participant', middlewares.checkAuthentication, participantController.post);
 
+
+/**
+ * @swagger
+ *
+ * /user/:
+ *   put:
+ *     description: Change data of a user
+ *     tags: [User]
+ *     security:
+ *       - {}
+ *       - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               DoB:
+ *                 type: string
+ *                 format: date
+ *               gender:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *             example: {
+ *               "id": "1",
+ *               "firstName": "John",
+ *               "lastName": "Doe",
+ *               "DoB": "1993-01-01",
+ *               "gender": "f",
+ *               "email": "invalid@invalid.com",
+ *               "password": "123"
+ *             }
+ *     responses:
+ *       200:
+ *         description: update successful
+ *       501:
+ *         description: id not provided
+ */
+router.put('/', middlewares.checkAuthentication, userController.put);
 
 module.exports = router;

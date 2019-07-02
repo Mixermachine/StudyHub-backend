@@ -60,10 +60,96 @@ const create = async (req, res) => {
 };
 
 const get = async (req, res) => {
-    helper.sendJsonResponse(res, 500, "Not implemented", "This call is not yet implemented");
+    const id = req.params.id;
+    if (id === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't find user without the id");
+    }
+
+    models.User.findByPk(id, {
+        attributes: ['id', 'firstName', 'lastName', 'DoB', 'gender', 'email', 'createdOn', 'modifiedOn']
+    }).then(user => {
+        if (!user) {
+            return helper.sendJsonResponse(res, 404, "Not found",
+                "User with id " + id + " was not found")
+        }
+
+        // email should only be visible to user who is logged in
+        if (!(req.auth && req.id === user.id)) {
+            user.email = user.createdOn = user.modifiedOn = "hidden";
+        }
+
+        res.status(200).json(user);
+    });
+};
+
+const put = async (req, res) => {
+    if (Object.keys(req.body).length === 0) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'The request body is empty'
+    });
+
+    // only id is mandatory
+    const id  = req.body.id;
+    const valuesDict = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        DoB: req.body.DoB,
+        gender: req.body.gender,
+        email: req.body.email,
+        password: req.body.password
+    };
+
+    if (id === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't find user without the id");
+    }
+
+    // check authentication
+    if (!(req.auth && req.id == id)) {
+        return helper.sendJsonResponse(res, 401, "Authentication error",
+            "You must be logged in to change your user data");
+    }
+
+    // check if email already exists
+    if (valuesDict['email'] !== undefined) {
+        // Check if changed email already exists in database
+        if (await models.User.count({where: {email: valuesDict['email']}})) {
+            // Return conflict as email already exists
+            helper.sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
+            return;
+        }
+    }
+
+
+    // Set modifiedOn field
+    valuesDict['modifiedOn'] = Date.now();
+
+    // hash password
+    if (valuesDict['password'] !== undefined) {
+        // Hash password and delete it from input
+        valuesDict['pwHash'] = bcrypt.hashSync(valuesDict['password'], saltRounds);
+        delete valuesDict['password'];
+    }
+
+    // build update
+    Object.keys(valuesDict).forEach(key => {
+        if (valuesDict[key] === undefined) {
+            delete valuesDict[key];
+        }
+    });
+
+    // update fields
+    models.User.update(valuesDict, {where:{id:id}})
+        .then(res.status(200).send())
+        .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
+            env === 'development' ? error.message : "Request failed"));
+
+    logger.info("User with id " + id + " updated");
 };
 
 module.exports = {
     create,
-    get
+    get,
+    put
 };
