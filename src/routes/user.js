@@ -71,8 +71,6 @@ const participantController = require('../controllers/participant');
  *       501:
  *         description: not all fields provided
  */
-//TODO: put update user, only what is submitted
-//TODO: search
 router.post('/', userController.create);
 
 /**
