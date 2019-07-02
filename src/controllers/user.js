@@ -76,7 +76,7 @@ const get = async (req, res) => {
 
         // email should only be visible to user who is logged in
         if (!(req.auth && req.id === user.id)) {
-            user.email = "hidden";
+            user.email = user.createdOn = user.modifiedOn = "hidden";
         }
 
         res.status(200).json(user);
