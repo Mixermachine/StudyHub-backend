@@ -16,7 +16,7 @@ const searchController = require('../controllers/search');
 /**
  * @swagger
  *
- * /search/:
+ * /search/study:
  *   post:
  *     description: Search for studies
  *     tags: [Search]
@@ -35,7 +35,9 @@ const searchController = require('../controllers/search');
  *             properties:
  *               searchText:
  *                 type: string
- *               location:
+ *               city:
+ *                 type: string
+ *               zip:
  *                 type: string
  *               organizer:
  *                 type: string
@@ -44,11 +46,12 @@ const searchController = require('../controllers/search');
  *               rewardType:
  *                 type: string
  *             example: {
- *               "searchText": "Computer Games",
- *               "location": "Garching",
- *               "organizer": "student",
- *               "minReward": "10",
- *               "rewardType": "direct"
+ *               "searchText": "Games",
+ *               "city": "Garching",
+ *               "zip": "85748",
+ *               "organizer": "s",
+ *               "minReward": "5",
+ *               "rewardType": "v"
  *             }
  *     responses:
  *       200:
@@ -56,6 +59,6 @@ const searchController = require('../controllers/search');
  *       501:
  *         description: not all fields provided
  */
-router.post('/', searchController.search);
+router.post('/study', searchController.searchStudy);
 
 module.exports = router;

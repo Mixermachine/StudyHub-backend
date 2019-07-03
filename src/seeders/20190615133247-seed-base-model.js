@@ -73,9 +73,11 @@ module.exports = {
             ], {})
         }).then(() => {
             return queryInterface.bulkInsert('Creators', [{
-                userId: userIds[2]
+                userId: userIds[2],
+                organizerType: "s"
             }, {
-                userId: userIds[3]
+                userId: userIds[3],
+                organizerType: "e"
             }
 
             ], {})
@@ -94,6 +96,9 @@ module.exports = {
                 additionalLocationInfo: '{\n' +
                     '  "room": "03.10.011"\n' +
                     '}',
+                rewardCurrency: "EUR",
+                rewardAmount: "5.0",
+                rewardType: "d",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[2],
                 payeeId: userIds[2]
@@ -109,6 +114,9 @@ module.exports = {
                 street: 'Rosenheimerstraße',
                 number: '14a',
                 additionalLocationInfo: '{}',
+                rewardCurrency: "EUR",
+                rewardAmount: "10.0",
+                rewardType: "l",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[3],
                 payeeId: userIds[3]
@@ -126,6 +134,9 @@ module.exports = {
                 additionalLocationInfo: '{\n' +
                     '  "room": "07.8.009"\n' +
                     '}',
+                rewardCurrency: "USD",
+                rewardAmount: "7.5",
+                rewardType: "v",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[2],
                 payeeId: userIds[3]
@@ -144,10 +155,10 @@ module.exports = {
                 keyword: 'humidity'
             }, {
                 studyId: studyIds[1],
-                keyword: 'video games'
+                keyword: 'games'
             }, {
                 studyId: studyIds[1],
-                keyword: 'computer games'
+                keyword: 'computer'
             }, {
                 studyId: studyIds[2],
                 keyword: 'friends'

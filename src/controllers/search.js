@@ -5,39 +5,45 @@ const helper = require('./helper');
 const Sequelize = require('sequelize');
 
 
-//TODO: QR-code get secret (base url in config), and verify secret in timeslot
-//TODO: get for study to receive participant ids with timeslot and  if he attended
-//TODO: change to search/study
-const search = async (req, res) => {
+const searchStudy = async (req, res) => {
 
     // only searchText is mandatory, all other fields are optional
     const valuesDict = {
         searchText: req.body.searchText,
-        location: req.body.location,    // zip or city
-        organizer: req.body.organizer,  //TODO: add field to creator as char f,s,e
-        minReward: req.body.minReward,  //TODO: study erweitern als double in € rewardCurrency, rewardAmount, rewardType
-        rewardType: req.body.rewardType //TODO: study erweitern als char d,l,n
+        city: req.body.city,
+        zip: req.body.zip,
+        organizer: req.body.organizer,
+        minReward: req.body.minReward,
+        rewardType: req.body.rewardType
     };
 
     const Op = Sequelize.Op;
 
     const orWhere = [];
-    orWhere.push({title: {[Op.iLike]:  "%" + valuesDict['searchText'] + "%"}}); // check title
-    orWhere.push({description: {[Op.iLike]:  "%" + valuesDict['searchText'] + "%"}}); // check description
-    orWhere.push({'$StudyKeywords.keyword$': {[Op.in]:  valuesDict['searchText'].split(' ')}}); // check keywords
-    // TODO: Lowercase?
+    orWhere.push({title: {[Op.iLike]: "%" + valuesDict['searchText'] + "%"}}); // check title
+    orWhere.push({description: {[Op.iLike]: "%" + valuesDict['searchText'] + "%"}}); // check description
+    orWhere.push({'$StudyKeywords.keyword$': {[Op.in]: valuesDict['searchText'].toLowerCase().split(' ')}}); // check keywords, keywords must be saved lower case
 
+    const andWhere = {[Op.or]: orWhere};
+    andWhere['published'] = {[Op.eq]: 'true'}
+    if (valuesDict['city'] !== undefined) {
+        andWhere['city'] = {[Op.iLike]: "%" + valuesDict['city'] + "%"}; // check city
+    }
+    if (valuesDict['zip'] !== undefined) {
+        andWhere['zip'] = {[Op.iLike]: valuesDict['zip']}; // check zip
+    }
+    if (valuesDict['organizer'] !== undefined) {
+        andWhere['$Creator.organizerType$'] = {[Op.iLike]: valuesDict['organizer']}; // check organizer
+    }
+    if (valuesDict['minReward'] !== undefined) {
+        andWhere['rewardAmount'] = {[Op.gte]: valuesDict['minReward']}; // check min reward
+    }
+    if (valuesDict['rewardType'] !== undefined) {
+        andWhere['rewardType'] = {[Op.iLike]: valuesDict['rewardType']}; // check reward type
+    }
 
-    const andWhere = {[Op.or]: orWhere}; // or
-    //andWhere['title'] = {[Op.iLike]:  "%game%"}; // and this (e.g. reward > 5) // just a placeholder
-    // check location
-    // check organizer
-    // check min reward
-    // check reward type
-
-
-
-    models.Study.findAll({autoQuoteAliasNames: false, where: andWhere, include: [models.StudyKeyword]})
+    models.Study.findAll({where: andWhere, include: [{model: models.StudyKeyword, attributes: []}, {model: models.Creator, attributes: ['organizerType']}],
+        attributes: ['title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'rewardType']})
         .then(result => {
 
             res.status(200).json(result)
@@ -47,7 +53,6 @@ const search = async (req, res) => {
 
 };
 
-
 module.exports = {
-    search
+    searchStudy
 };

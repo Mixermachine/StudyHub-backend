@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         street: DataTypes.STRING,
         number: DataTypes.STRING,
         additionalLocationInfo: DataTypes.STRING,
+        rewardCurrency: DataTypes.STRING,
+        rewardAmount: DataTypes.DOUBLE,
+        rewardType: DataTypes.STRING,
         published: DataTypes.BOOLEAN
     }, {
         timestamps: false
