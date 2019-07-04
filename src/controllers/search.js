@@ -7,19 +7,22 @@ const Sequelize = require('sequelize');
 
 const searchStudy = async (req, res) => {
 
-    // only searchText is mandatory, all other fields are optional
+    // all fields are optional
     const valuesDict = {
-        searchText: req.body.searchText,
-        city: req.body.city,
-        zip: req.body.zip,
-        organizer: req.body.organizer,
-        minReward: req.body.minReward,
-        rewardType: req.body.rewardType
+        searchText: req.query.searchText,
+        city: req.query.city,
+        zip: req.query.zip,
+        organizer: req.query.organizer,
+        minReward: req.query.minReward,
+        rewardType: req.query.rewardType
     };
 
     const Op = Sequelize.Op;
 
     const orWhere = [];
+    if (valuesDict['searchText'] === undefined) {
+        valuesDict['searchText'] = '';
+    }
     orWhere.push({title: {[Op.iLike]: "%" + valuesDict['searchText'] + "%"}}); // check title
     orWhere.push({description: {[Op.iLike]: "%" + valuesDict['searchText'] + "%"}}); // check description
     orWhere.push({'$StudyKeywords.keyword$': {[Op.in]: valuesDict['searchText'].toLowerCase().split(' ')}}); // check keywords, keywords must be saved lower case
