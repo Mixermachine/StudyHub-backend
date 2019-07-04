@@ -5,6 +5,8 @@ const helper = require('./helper');
 const Sequelize = require('sequelize');
 
 
+//TODO: QR-code get secret (base url in config), and verify secret in timeslot
+//TODO: get for study to receive participant ids with timeslot and if he attended
 const searchStudy = async (req, res) => {
 
     // only searchText is mandatory, all other fields are optional

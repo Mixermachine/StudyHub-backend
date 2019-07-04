@@ -32,6 +32,27 @@ const get = (req, res) => {
     });
 };
 
+const getParticipants = (req, res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't get details for a study without the id of the study");
+    }
+
+    models.Study.findByPk(id, {
+        include: [{model: models.Timeslot, attributes:['participantId', 'start', 'stop', 'attended']}]
+    }).then(study => {
+        if (!study || !study.published) {
+            return helper.sendJsonResponse(res, 404, "Not found",
+                "Study with id " + id + " was not found")
+        }
+
+
+
+        res.status(200).json(study);
+    });
+};
+
 const post = async (req, res) => {
     // check if user is creator already
     if (!(await creator.isCreator(req.id))) {
@@ -84,5 +105,6 @@ const post = async (req, res) => {
 
 module.exports = {
     get,
-    post
+    post,
+    getParticipants
 };

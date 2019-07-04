@@ -45,6 +45,35 @@ router.get('/:id', middlewares.checkAuthenticationOptional, studyController.get)
 /**
  * @swagger
  *
+ * /study/participants/{id}:
+ *   get:
+ *     description: Get participants of a study with their time slot infos.
+ *     tags: [Study]
+ *     security:
+ *     - {}
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: success
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/participants/:id', middlewares.checkAuthentication, studyController.getParticipants);
+
+/**
+ * @swagger
+ *
  * /study/:
  *   post:
  *     description: Create a study

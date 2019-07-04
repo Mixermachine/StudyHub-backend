@@ -15,7 +15,7 @@ module.exports = {
             lastName: 'Doe',
             DoB: '1993-01-01',
             gender: 'm',
-            pwHash: '$10$IW.DpFpWt7fkuxVvZ2hg7OZJGkycY4gHaXH7jNSxhOwUPquAJaKPW',
+            pwHash: '$2a$10$jpy7DA15sqVoirVrJWCatOdhKBzJICkiFogGzLCRaTJNHNWUouTI2',
             email: 'test@test.com',
             createdOn: '2019-06-20 12:18:12',
             modifiedOn: '2019-06-20 12:18:12'
@@ -26,7 +26,7 @@ module.exports = {
             lastName: 'Doe',
             DoB: '1994-02-03',
             gender: 'f',
-            pwHash: '$10$IW.DpFpWt7fkuxVvZ2hg7OZJGkycY4gHaXH7jNSxhOwUPquAJaKPW',
+            pwHash: '$2a$10$jpy7DA15sqVoirVrJWCatOdhKBzJICkiFogGzLCRaTJNHNWUouTI2',
             email: 'test2@test.com',
             createdOn: '2019-06-20 13:38:11',
             modifiedOn: '2019-06-20 13:38:11'
@@ -37,7 +37,7 @@ module.exports = {
             lastName: 'StudyMaker',
             DoB: '1990-05-17',
             gender: 'm',
-            pwHash: '$10$IW.DpFpWt7fkuxVvZ2hg7OZJGkycY4gHaXH7jNSxhOwUPquAJaKPW',
+            pwHash: '$2a$10$jpy7DA15sqVoirVrJWCatOdhKBzJICkiFogGzLCRaTJNHNWUouTI2',
             email: 'test3@test.com',
             createdOn: '2019-06-19 11:25:33',
             modifiedOn: '2019-06-19 11:25:33'
