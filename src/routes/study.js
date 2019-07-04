@@ -5,6 +5,7 @@ const router = express.Router();
 
 const middlewares = require('../middlewares');
 const studyController = require('../controllers/study');
+const timeslotController = require('../controllers/timeslot');
 
 /**
  * @swagger
@@ -16,7 +17,7 @@ const studyController = require('../controllers/study');
 /**
  * @swagger
  *
- * /study/{id}:
+ * /study/{studyId}:
  *   get:
  *     description: Get data of study. Optional authentication. Creater and payee will get additional information.
  *     tags: [Study]
@@ -27,7 +28,7 @@ const studyController = require('../controllers/study');
  *       - application/json
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: studyId
  *         required: true
  *         schema:
  *           type: integer
@@ -40,7 +41,7 @@ const studyController = require('../controllers/study');
  *       501:
  *         description: not all fields provided
  */
-router.get('/:id', middlewares.checkAuthenticationOptional, studyController.get);
+router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController.get);
 
 /**
  * @swagger
@@ -117,5 +118,13 @@ router.get('/:id', middlewares.checkAuthenticationOptional, studyController.get)
  *         description: not all fields provided
  */
 router.post('/', middlewares.checkAuthentication, studyController.post);
+
+router.get('/:studyid/timeslot/', middlewares.checkAuthenticationOptional, timeslotController.get);
+
+router.get('/:studyid/timeslot/:timeslotid', middlewares.checkAuthenticationOptional, timeslotController.get);
+
+router.post('/:studyid/timeslot', middlewares.checkAuthentication, timeslotController.post);
+
+router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, timeslotController.put);
 
 module.exports = router;

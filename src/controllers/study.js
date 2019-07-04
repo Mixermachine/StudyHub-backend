@@ -8,19 +8,19 @@ const creator = require('./creator');
 const payee = require('./payee');
 
 const get = (req, res) => {
-    const id = req.params.id;
-    if (id === undefined) {
+    const studyId = req.params.studyId;
+    if (studyId === undefined) {
         return helper.sendJsonResponse(res, 422, "Parameter id is missing",
             "Can't get details for a study without the id of the study");
     }
 
-    models.Study.findByPk(id, {
+    models.Study.findByPk(studyId, {
         attributes: ['title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
             'additionalLocationInfo', 'published', 'creatorId', 'payeeId']
     }).then(study => {
         if (!study || !study.published) {
             return helper.sendJsonResponse(res, 404, "Not found",
-                "Study with id " + id + " was not found")
+                "Study with id " + studyId + " was not found")
         }
 
         // creator and payee should only be visible to these two
