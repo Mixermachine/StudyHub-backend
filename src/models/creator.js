@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             foreignKey: true
-        }
+        },
+        organizerType: DataTypes.STRING      //f=faculty, ,s=student ,e=external
     }, {
         timestamps: false
     });

@@ -1,7 +1,7 @@
 'use strict';
 
-const userIds = [2147400001, 2147400002, 2147400003];
-const studyIds = [2147400001];
+const userIds = [2147400001, 2147400002, 2147400003, 2147400004];
+const studyIds = [2147400001, 2147400002, 2147400003];
 
 
 module.exports = {
@@ -33,14 +33,24 @@ module.exports = {
 
         }, {
             id: userIds[2],
-            firstName: 'Study',
-            lastName: 'Payee',
-            DoB: '1993-02-22',
-            gender: 'f',
+            firstName: 'Student',
+            lastName: 'StudyMaker',
+            DoB: '1990-05-17',
+            gender: 'm',
             pwHash: '$10$IW.DpFpWt7fkuxVvZ2hg7OZJGkycY4gHaXH7jNSxhOwUPquAJaKPW',
             email: 'test3@test.com',
             createdOn: '2019-06-19 11:25:33',
             modifiedOn: '2019-06-19 11:25:33'
+        }, {
+            id: userIds[3],
+            firstName: 'Study',
+            lastName: 'Payee',
+            DoB: '1993-02-22',
+            gender: 'f',
+            pwHash: '$2a$10$jpy7DA15sqVoirVrJWCatOdhKBzJICkiFogGzLCRaTJNHNWUouTI2',
+            email: 'test4@test.com',
+            createdOn: '2019-07-01 19:16:22',
+            modifiedOn: '2019-07-01 19:16:22'
         }
 
         ], {}).then(() => {
@@ -56,12 +66,18 @@ module.exports = {
         }).then(() => {
             return queryInterface.bulkInsert('Payees', [{
                 userId: userIds[2]
+            }, {
+                userId: userIds[3]
             }
 
             ], {})
         }).then(() => {
             return queryInterface.bulkInsert('Creators', [{
-                userId: userIds[2]
+                userId: userIds[2],
+                organizerType: "s"
+            }, {
+                userId: userIds[3],
+                organizerType: "e"
             }
 
             ], {})
@@ -80,9 +96,50 @@ module.exports = {
                 additionalLocationInfo: '{\n' +
                     '  "room": "03.10.011"\n' +
                     '}',
+                rewardCurrency: "EUR",
+                rewardAmount: "5.0",
+                rewardType: "d",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[2],
                 payeeId: userIds[2]
+            }, {
+                id: studyIds[1],
+                title: 'Study to find good computer games!',
+                description: 'We show you computer games and you tell us if you like them...',
+                prerequisites: 'Needs to like gaming',
+                capacity: '20',
+                country: 'DE',
+                city: 'München',
+                zip: '81539',
+                street: 'Rosenheimerstraße',
+                number: '14a',
+                additionalLocationInfo: '{}',
+                rewardCurrency: "EUR",
+                rewardAmount: "10.0",
+                rewardType: "l",     //d=direct, l=lottery, v=voucher, n=none
+                published: 'true',
+                creatorId: userIds[3],
+                payeeId: userIds[3]
+            }, {
+                id: studyIds[2],
+                title: 'Games and friends',
+                description: 'This study tries to determine if people who play any sort of games have more or less friends then others.',
+                prerequisites: '',
+                capacity: '50',
+                country: 'DE',
+                city: 'Garching',
+                zip: '85748',
+                street: 'Bolzmannstraße',
+                number: '3',
+                additionalLocationInfo: '{\n' +
+                    '  "room": "07.8.009"\n' +
+                    '}',
+                rewardCurrency: "USD",
+                rewardAmount: "7.5",
+                rewardType: "v",     //d=direct, l=lottery, v=voucher, n=none
+                published: 'true',
+                creatorId: userIds[2],
+                payeeId: userIds[3]
             }
 
             ], {})
@@ -96,6 +153,24 @@ module.exports = {
             }, {
                 studyId: studyIds[0],
                 keyword: 'humidity'
+            }, {
+                studyId: studyIds[1],
+                keyword: 'games'
+            }, {
+                studyId: studyIds[1],
+                keyword: 'computer'
+            }, {
+                studyId: studyIds[2],
+                keyword: 'friends'
+            }, {
+                studyId: studyIds[2],
+                keyword: 'video'
+            }, {
+                studyId: studyIds[2],
+                keyword: 'games'
+            }, {
+                studyId: studyIds[2],
+                keyword: 'board'
             }
 
             ], {})
@@ -116,7 +191,40 @@ module.exports = {
                 start: '2019-06-26 13:00:00',
                 stop: '2019-06-26 13:30:00',
                 attended: 'false',
-                studyId: studyIds[0],
+                studyId: studyIds[0]
+            }, {
+                start: '2019-06-25 12:00:00',
+                stop: '2019-06-25 12:30:00',
+                attended: 'true',
+                studyId: studyIds[1],
+                participantId: userIds[0]
+            }, {
+                start: '2019-06-30 12:30:00',
+                stop: '2019-06-30 13:00:00',
+                attended: 'false',
+                studyId: studyIds[1]
+            }, {
+                start: '2019-06-30 13:00:00',
+                stop: '2019-06-30 13:30:00',
+                attended: 'false',
+                studyId: studyIds[1],
+                participantId: userIds[1]
+            }, {
+                start: '2019-06-30 12:00:00',
+                stop: '2019-06-30 12:30:00',
+                attended: 'false',
+                studyId: studyIds[2]
+            }, {
+                start: '2019-06-26 12:30:00',
+                stop: '2019-06-26 13:00:00',
+                attended: 'false',
+                studyId: studyIds[2]
+            }, {
+                start: '2019-06-26 13:00:00',
+                stop: '2019-06-26 13:30:00',
+                attended: 'false',
+                studyId: studyIds[2],
+                participantId: userIds[1]
             }
 
             ], {})
