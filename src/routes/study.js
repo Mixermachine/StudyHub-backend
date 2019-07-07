@@ -50,6 +50,8 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *   post:
  *     description: Create a study
  *     tags: [Study]
+ *     security:
+ *     - BearerAuth: []
  *     consumes:
  *       - application/json
  *     produces:
@@ -119,12 +121,179 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  */
 router.post('/', middlewares.checkAuthentication, studyController.post);
 
-router.get('/:studyid/timeslot/', middlewares.checkAuthenticationOptional, timeslotController.get);
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/:
+ *   get:
+ *     description: Get all timeslots of a study. Optional authentication. Creater will get additional information.
+ *     tags: [Study]
+ *     security:
+ *     - {}
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/timeslot/', middlewares.checkAuthenticationOptional, timeslotController.get);
 
-router.get('/:studyid/timeslot/:timeslotid', middlewares.checkAuthenticationOptional, timeslotController.get);
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/{timeslotId}:
+ *   get:
+ *     description: Get data for one specific timeslot. Optional authentication. Creater will get additional information.
+ *     tags: [Study]
+ *     security:
+ *     - {}
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: timeslotId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/timeslot/:timeslotId', middlewares.checkAuthenticationOptional, timeslotController.get);
 
-router.post('/:studyid/timeslot', middlewares.checkAuthentication, timeslotController.post);
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/:
+ *   post:
+ *     description: Create one or many timeslots for a study
+ *     tags: [Study]
+ *     security:
+ *     - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: string
+ *               format: date-time
+ *             required:
+ *               - {start, stop}
+ *             properties:
+ *               start:
+ *                 type: string
+ *                 format: date-time
+ *               stop:
+ *                 type: string
+ *                 format: date-time
+ *             example: {
+ *               "timeslots":[
+ *                 {"start":"2019-07-07 10:30:00","stop":"2019-07-07 11:30:00"},
+ *                 {"start":"2019-07-07 11:30:00","stop":"2019-07-07 12:30:00"},
+ *                 {"start":"2019-07-07 12:30:00","stop":"2019-07-07 13:30:00"}
+ *               ]
+ *             }
+ *     responses:
+ *       200:
+ *         description: created
+ *       501:
+ *         description: not all fields provided
+ */
+router.post('/:studyId/timeslot/', middlewares.checkAuthentication, timeslotController.post);
 
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/{timeslotId}:
+ *   put:
+ *     description: Change state of a timeslot. Non creator can only use field
+ *     tags: [Study]
+ *     security:
+ *     - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: timeslotId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - start
+ *               - stop
+ *               - participantId
+ *             properties:
+ *               start:
+ *                 type: string
+ *                 format: date-time
+ *               stop:
+ *                 type: string
+ *                 format: date-time
+ *               participantId:
+ *                 type: integer
+ *             example: {
+ *	             "start": "2019-07-07 10:30:00",
+ *               "stop": "2019-07-07 11:30:00",
+ *               "participantId": 1
+ *             }
+ *     responses:
+ *       200:
+ *         description: created
+ *       501:
+ *         description: not all fields provided
+ */
 router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, timeslotController.put);
 
 module.exports = router;
