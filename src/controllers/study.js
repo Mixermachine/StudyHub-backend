@@ -73,6 +73,9 @@ const post = async (req, res) => {
             "Please provide an id which corresponding user is a payee");
     }
 
+    // Add creatorId
+    valuesDict["creatorId"] = req.id;
+
     // Add optional
     valuesDict["additionalLocationInfo"] = req.body.additionalLocationInfo;
 
