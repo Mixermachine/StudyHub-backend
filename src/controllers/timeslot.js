@@ -1,5 +1,6 @@
 "use strict";
 
+
 const models = require('../models');
 const helper = require('./helper');
 const env = process.env.NODE_ENV || 'development';
@@ -13,7 +14,7 @@ const get = (req, res) => {
 
     const timeslotId = req.params.timeslotId;
 
-    const attributes = ['start', 'stop', 'attended', 'studyId', 'participantId'];
+    const attributes = ['id', 'start', 'stop', 'attended', 'studyId', 'participantId'];
 
     // get study first so we get the id of the study creator
     models.Study.findByPk(studyId)
@@ -36,31 +37,23 @@ const get = (req, res) => {
                     }
 
                     if (timeslotId) { // need to return single item not
-                        return res.code(200).json(timeslots[0]);
+                        return res.status(200).json(timeslots[0]);
                     } else {
-                        return res.code(200).json(timeslots);
+                        return res.status(200).json(timeslots);
                     }
                 });
         });
-    if (timeslotId) {
-        models.timeslot.findOne({where: {id: timeslotId, studyId: studyId}, attributes: attributes})
-            .then(timeslot => {
-                if (!timeslot) {
-                    return helper.sendJsonResponse(res, 404, "Not found",
-                        "Study " + studyId + " has no timeslot with " + timeslotId);
-                }
-
-                res.status(200).json()
-            });
-    }
 };
 
 const removePersonalData = (timeslot) => {
-    timeslot.taken = timeslot.studyId !== undefined;
-    delete timeslot.studyId;
+    timeslot.reserved = timeslot.participantId !== null;
+    delete timeslot.participantId;
 };
 
 const post = (req, res) => {
+    const test = {};
+    test["timeslots"] = [{"start": "2019-07-07 10:30:00", "stop": "2019-07-07 11:30:00"}];
+
     const studyId = req.params.studyId;
     if (!studyId) {
         return helper.sendJsonResponse(res, 422, "Parameter studyId is missing",
@@ -77,7 +70,7 @@ const post = (req, res) => {
 
     Promise.all(promises)
         .then((x) => {
-            return res.code(200).send();
+            return res.status(200).send(x);
         })
         .catch(err => {
             return helper.sendJsonResponse(res, 500, "Internal server error",
@@ -106,7 +99,7 @@ const put = (req, res) => {
 
     models.Study.findByPk(studyId)
         .then(study => {
-            const timeslotUpdate = req.body.timeslot;
+            const timeslotUpdate = req.body;
 
             // studyId should not be changed.
             // This could be really bad (creators moving slots to another study so they don't have to pay)
@@ -115,9 +108,15 @@ const put = (req, res) => {
                     "You can not change the studyId of a timeslot")
             }
 
+            // id should never be changed, as references could become invalid
+            if (timeslotUpdate.id !== undefined) {
+                return helper.sendJsonResponse(res, 403, "Forbidden",
+                    "You can not change the id of a timeslot")
+            }
+
             // if public user check values first
             if (study.creatorId !== req.id &&
-                !(timeslotUpdate.length !== 1 && timeslotUpdate.participantId !== req.id)) {
+                (Object.keys(timeslotUpdate).length !== 1 || timeslotUpdate.participantId !== req.id)) {
                 return helper.sendJsonResponse(res, 401, "Unauthorized",
                     "If you are not the study creator your put should only contain the " +
                     "field participantId with your own id");
