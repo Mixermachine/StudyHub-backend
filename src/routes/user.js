@@ -263,7 +263,7 @@ router.get('/participant/:id', middlewares.checkAuthentication, participantContr
 /**
  * @swagger
  *
- * /user/payee:
+ * /user/participant:
  *   post:
  *     description: Make user a participant
  *     tags: [User]
@@ -306,7 +306,6 @@ router.post('/participant', middlewares.checkAuthentication, participantControll
  *     description: Change data of a user
  *     tags: [User]
  *     security:
- *       - {}
  *       - BearerAuth: []
  *     consumes:
  *       - application/json
