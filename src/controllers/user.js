@@ -1,3 +1,5 @@
+"use strict";
+
 const models = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const bcrypt = require('bcryptjs');
@@ -52,7 +54,11 @@ const create = async (req, res) => {
 
     // Add new user into database
     models.User.create(valuesDict)
-        .then(res.status(200).send())
+        .then(x => {
+            if (x) {
+                res.status(200).json({id: x.id});
+            }
+        })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
             env === 'development' ? error.message : "Request failed"));
 

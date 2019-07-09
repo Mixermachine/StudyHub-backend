@@ -11,7 +11,7 @@ const generic = {
                 "Can not process query for missing field id");
         }
         generic.getX(tblObj, id).then(x => {
-            if(x) {
+            if (x) {
                 res.status(200).json(x);
             } else {
                 helper.sendJsonResponse(res, 404, "Not found",
@@ -33,9 +33,10 @@ const generic = {
                     id + " is already a " + tblObj.name);
             } else {
                 generic.makeX(tblObj, id)
-                    .then(() => {
-                        helper.sendJsonResponse(res, 200, undefined,
-                            "User " + id + " is now a " + tblObj.name)
+                    .then((x) => {
+                        if (x) {
+                            res.status(200).json({id: x.userId});
+                        }
                     })
                     .catch(error => helper.sendJsonResponse(res, 500, "Server error",
                         env === 'development' ? error.message : "Request failed"));

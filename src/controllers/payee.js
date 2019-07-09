@@ -1,3 +1,5 @@
+"use strict";
+
 const generic = require('./genericUserExtension');
 const models = require('../models');
 
