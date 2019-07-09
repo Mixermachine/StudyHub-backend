@@ -51,9 +51,6 @@ const removePersonalData = (timeslot) => {
 };
 
 const post = (req, res) => {
-    const test = {};
-    test["timeslots"] = [{"start": "2019-07-07 10:30:00", "stop": "2019-07-07 11:30:00"}];
-
     const studyId = req.params.studyId;
     if (!studyId) {
         return helper.sendJsonResponse(res, 422, "Parameter studyId is missing",
