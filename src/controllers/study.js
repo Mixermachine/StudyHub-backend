@@ -16,7 +16,7 @@ const get = (req, res) => {
 
     models.Study.findByPk(studyId, {
         attributes: ['title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
-            'additionalLocationInfo', 'published', 'creatorId', 'payeeId']
+            'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'rewardType', 'published', 'creatorId', 'payeeId']
     }).then(study => {
         if (!study || !study.published) {
             return helper.sendJsonResponse(res, 404, "Not found",
@@ -50,6 +50,9 @@ const post = async (req, res) => {
         zip: req.body.zip,
         street: req.body.street,
         number: req.body.number,
+        rewardCurrency: req.body.rewardCurrency,
+        rewardAmount: req.body.rewardAmount,
+        rewardType: req.body.rewardType,
         published: req.body.published,
         payeeId: req.body.payeeId
     };
