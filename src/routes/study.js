@@ -308,4 +308,76 @@ router.post('/:studyId/timeslot/', middlewares.checkAuthentication, timeslotCont
  */
 router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, timeslotController.put);
 
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/{timeslotId}/generateSecureCheckin:
+ *   get:
+ *     description: Generate
+ *     tags: [Study]
+ *     security:
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: timeslotId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.checkAuthentication, timeslotController.generateSecretCheckin);
+
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/{timeslotId}/secureCheckin/{token}:
+ *   get:
+ *     description: Generate
+ *     tags: [Study]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: timeslotId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: aksjdujhduehu1h3u21h3u1uihuisdhf
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/timeslot/:timeslotId/secureCheckin/:token', timeslotController.secretCheckin);
+
 module.exports = router;
