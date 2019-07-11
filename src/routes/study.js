@@ -72,6 +72,9 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *               - zip
  *               - street
  *               - number
+ *               - rewardCurrency
+ *               - rewardAmount
+ *               - rewardType
  *               - published
  *               - payeeId
  *             optional:
@@ -95,6 +98,12 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *                 type: string
  *               number:
  *                 type: string
+ *               rewardCurrency:
+ *                 type: string
+ *               rewardAmount:
+ *                 type: double
+ *               rewardType:
+ *                 type: string
  *               published:
  *                 type: boolean
  *               payeeId:
@@ -109,8 +118,11 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *               "zip": "85737",
  *               "street": "Eugenstr",
  *               "number": "4",
- *               "published": "true",
  *               "additionalLocationInfo": "{}",
+ *               "rewardCurrency": "EUR",
+ *               "rewardAmount": "5.0",
+ *               "rewardType": "d",
+ *               "published": "true",
  *	             "payeeId": "2147400002"
  *             }
  *     responses:
