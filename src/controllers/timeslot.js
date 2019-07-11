@@ -67,7 +67,10 @@ const post = (req, res) => {
 
     Promise.all(promises)
         .then((x) => {
-            return res.status(200).send(x);
+            const ids = x.map(x => {
+                return {id: x.id};
+            });
+            return res.status(200).send({ids: ids});
         })
         .catch(err => {
             return helper.sendJsonResponse(res, 500, "Internal server error",

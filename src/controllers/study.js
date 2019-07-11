@@ -80,7 +80,11 @@ const post = async (req, res) => {
     valuesDict["additionalLocationInfo"] = req.body.additionalLocationInfo;
 
     models.Study.create(valuesDict)
-        .then(res.status(200).send())
+        .then(x => {
+            if (x) {
+                res.status(200).send({id: x.id});
+            }
+        })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
             env === 'development' ? error.message : "Request failed"));
 };
