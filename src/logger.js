@@ -25,7 +25,7 @@ logger.getContextLogger = (context) => {
 
     newLogger.logRestCall = (req, res, next) => {
         req.uuid = uuidv4();
-        newLogger.http(JSON.stringify({uuid: req.uuid, url: req.originalUrl}));
+        newLogger.httpWithUuid(req, {url: req.originalUrl});
 
         next();
     };
@@ -34,7 +34,24 @@ logger.getContextLogger = (context) => {
         return JSON.stringify({uuid: req.uuid, message: msg});
     };
 
+    // recreate logging methods with req context for uuid
+    newLogger.debugWithUuid = (req, msg) => {
+        newLogger.debug(newLogger.wrapMessageWithUuid(req, msg));
+    };
+
+    newLogger.httpWithUuid = (req, msg) => {
+        newLogger.http(newLogger.wrapMessageWithUuid(req, msg));
+    };
+
+    newLogger.infoWithUuid = (req, msg) => {
+        newLogger.info(newLogger.wrapMessageWithUuid(req, msg));
+    };
+
+    newLogger.errorWithUuid = (req, msg) => {
+        newLogger.error(newLogger.wrapMessageWithUuid(req, msg));
+    };
+
     return newLogger;
 };
 
-module.exports = logger;
+module.exports = logger.getContextLogger;
