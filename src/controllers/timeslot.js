@@ -159,7 +159,7 @@ const generateSecretCheckin = (req, res) => {
                 study.getTimeslots({where: {id: timeslotId}})
                     .then(timeslots => {
                         if (timeslots) {
-                            if (timeslots[0].participantId !== null) {
+                            if (timeslots[0].participantId === null) {
                                 return helper.sendJsonResponse(res, 405, "Timeslot has no participant",
                                     "To generate secureCheckin the timeslot has to be assigned to a participant");
                             }
