@@ -66,10 +66,14 @@ const create = async (req, res) => {
 };
 
 const get = async (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
     if (id === undefined) {
-        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
-            "Can't find user without the id");
+        id = req.id;  // get id from caller
+    }
+
+    if (id !== req.id) {
+        return helper.sendJsonResponse(res, 401, "Unauthorized",
+            "You can not access user data of other users");
     }
 
     models.User.findByPk(id, {
