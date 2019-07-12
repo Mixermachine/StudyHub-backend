@@ -21,7 +21,7 @@ const generic = {
     },
 
     post: (tblObj, req, res) => {
-        const id = req.body.id;
+        const id = req.params.id;
         if (!id) {
             return helper.sendJsonResponse(res, 422, "Parameter id is missing",
                 "Can not process query for missing field id");

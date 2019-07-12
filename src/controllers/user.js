@@ -90,13 +90,19 @@ const get = async (req, res) => {
 };
 
 const put = async (req, res) => {
+    const id = req.params.id;
+
+    if (id === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't find user without the id");
+    }
+
     if (Object.keys(req.body).length === 0) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body is empty'
     });
 
     // only id is mandatory
-    const id  = req.body.id;
     const valuesDict = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,

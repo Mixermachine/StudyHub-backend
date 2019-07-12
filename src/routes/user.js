@@ -133,7 +133,7 @@ router.get('/creator/:id', middlewares.checkAuthentication, creatorController.ge
 /**
  * @swagger
  *
- * /user/creator:
+ * /user/creator/{id}:
  *   post:
  *     description: Make user a creator
  *     tags: [User]
@@ -143,6 +143,13 @@ router.get('/creator/:id', middlewares.checkAuthentication, creatorController.ge
  *       - application/json
  *     produces:
  *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     requestBody:
  *       required: true
  *       content:
@@ -150,12 +157,12 @@ router.get('/creator/:id', middlewares.checkAuthentication, creatorController.ge
  *           schema:
  *             type: object
  *             required:
- *               - id
+ *               - organizerType
  *             properties:
- *               id:
+ *               organizerType:
  *                 type: string
  *             example: {
- *               "id": 1
+ *               "organizerType": "s"
  *             }
  *     responses:
  *       200:
@@ -165,7 +172,7 @@ router.get('/creator/:id', middlewares.checkAuthentication, creatorController.ge
  *       501:
  *         description: id not provided
  */
-router.post('/creator/', middlewares.checkAuthentication, creatorController.post);
+router.post('/creator/:id', middlewares.checkAuthentication, creatorController.post);
 
 /**
  * @swagger
@@ -198,7 +205,7 @@ router.get('/payee/:id', middlewares.checkAuthentication, payeeController.get);
 /**
  * @swagger
  *
- * /user/payee:
+ * /user/payee/{id}:
  *   post:
  *     description: Make user a payee
  *     tags: [User]
@@ -208,20 +215,13 @@ router.get('/payee/:id', middlewares.checkAuthentication, payeeController.get);
  *       - application/json
  *     produces:
  *       - application/json
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - id
- *             properties:
- *               id:
- *                 type: string
- *             example: {
- *               "id": 1
- *             }
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *         description: user is payee now
@@ -230,7 +230,7 @@ router.get('/payee/:id', middlewares.checkAuthentication, payeeController.get);
  *       501:
  *         description: id not provided
  */
-router.post('/payee/', middlewares.checkAuthentication, payeeController.post);
+router.post('/payee/:id', middlewares.checkAuthentication, payeeController.post);
 
 /**
  * @swagger
@@ -263,7 +263,7 @@ router.get('/participant/:id', middlewares.checkAuthentication, participantContr
 /**
  * @swagger
  *
- * /user/participant:
+ * /user/participant/{id}:
  *   post:
  *     description: Make user a participant
  *     tags: [User]
@@ -273,20 +273,13 @@ router.get('/participant/:id', middlewares.checkAuthentication, participantContr
  *       - application/json
  *     produces:
  *       - application/json
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - id
- *             properties:
- *               id:
- *                 type: string
- *             example: {
- *               "id": 1
- *             }
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *         description: user is participant now
@@ -295,13 +288,13 @@ router.get('/participant/:id', middlewares.checkAuthentication, participantContr
  *       501:
  *         description: id not provided
  */
-router.post('/participant', middlewares.checkAuthentication, participantController.post);
+router.post('/participant/:id', middlewares.checkAuthentication, participantController.post);
 
 
 /**
  * @swagger
  *
- * /user/:
+ * /user/{id}:
  *   put:
  *     description: Change data of a user
  *     tags: [User]
@@ -311,17 +304,20 @@ router.post('/participant', middlewares.checkAuthentication, participantControll
  *       - application/json
  *     produces:
  *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - id
  *             properties:
- *               id:
- *                 type: integer
  *               firstName:
  *                 type: string
  *               lastName:
@@ -336,7 +332,6 @@ router.post('/participant', middlewares.checkAuthentication, participantControll
  *               password:
  *                 type: string
  *             example: {
- *               "id": "1",
  *               "firstName": "John",
  *               "lastName": "Doe",
  *               "DoB": "1993-01-01",
@@ -350,6 +345,6 @@ router.post('/participant', middlewares.checkAuthentication, participantControll
  *       501:
  *         description: id not provided
  */
-router.put('/', middlewares.checkAuthentication, userController.put);
+router.put('/:id', middlewares.checkAuthentication, userController.put);
 
 module.exports = router;
