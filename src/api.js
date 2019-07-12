@@ -9,7 +9,6 @@ const middlewares = require('./middlewares');
 const auth = require('./routes/auth');
 const user = require('./routes/user');
 const study = require('./routes/study');
-const search = require('./routes/search');
 
 const swaggerDoc = require('./swaggerDoc');
 
@@ -34,7 +33,6 @@ api.get('/', (req, res) => {
 api.use('/auth', auth);
 api.use('/user', user);
 api.use('/study', study);
-api.use('/search', search);
 //api.use('/movies', movie);
 
 // finally, setup swagger
