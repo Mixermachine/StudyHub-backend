@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
 const middlewares = require('./middlewares');
-const logger = require('./logger');
+const logger = require('./logger').getContextLogger("rest_collecter");
 
 const auth = require('./routes/auth');
 const user = require('./routes/user');
