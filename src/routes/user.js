@@ -290,7 +290,6 @@ router.get('/participant/:id', middlewares.checkAuthentication, participantContr
  */
 router.post('/participant/:id', middlewares.checkAuthentication, participantController.post);
 
-
 /**
  * @swagger
  *

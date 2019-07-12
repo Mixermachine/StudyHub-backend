@@ -46,6 +46,97 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
 /**
  * @swagger
  *
+ * /study/{id}:
+ *   put:
+ *     description: Change data of a study
+ *     tags: [Study]
+ *     security:
+ *       - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             optional:
+ *               - title
+ *               - description
+ *               - prerequisites
+ *               - capacity
+ *               - country
+ *               - city
+ *               - zip
+ *               - street
+ *               - number
+ *               - rewardCurrency
+ *               - rewardAmount
+ *               - rewardType
+ *               - published
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               prerequisites:
+ *                 type: string
+ *               capacity:
+ *                 type: integer
+ *               country:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               zip:
+ *                 type: string
+ *               street:
+ *                 type: string
+ *               number:
+ *                 type: string
+ *               rewardCurrency:
+ *                 type: string
+ *               rewardAmount:
+ *                 type: double
+ *               rewardType:
+ *                 type: string
+ *               published:
+ *                 type: boolean
+ *             example: {
+ *	             "title": "Test study",
+ *               "description": "Lorem ipsum long text",
+ *               "prerequisites": "123",
+ *               "capacity": "123",
+ *               "country": "DE",
+ *               "city": "Ismaning",
+ *               "zip": "85737",
+ *               "street": "Eugenstr",
+ *               "number": "4",
+ *               "additionalLocationInfo": "{}",
+ *               "rewardCurrency": "EUR",
+ *               "rewardAmount": "5.0",
+ *               "rewardType": "d",
+ *               "published": "true"
+ *             }
+ *     responses:
+ *       200:
+ *         description: update successful
+ *       501:
+ *         description: id not provided
+ */
+router.put('/:id', middlewares.checkAuthentication, studyController.put);
+
+/**
+ * @swagger
+ *
  * /study:
  *   get:
  *     description: Search for studies
