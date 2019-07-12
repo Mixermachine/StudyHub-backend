@@ -102,7 +102,7 @@ const put = async (req, res) => {
         message: 'The request body is empty'
     });
 
-    // only id is mandatory
+    // all fields are optional but one must be specified
     const valuesDict = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -111,11 +111,6 @@ const put = async (req, res) => {
         email: req.body.email,
         password: req.body.password
     };
-
-    if (id === undefined) {
-        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
-            "Can't find user without the id");
-    }
 
     // check authentication
     if (!(req.auth && req.id == id)) {

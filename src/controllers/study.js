@@ -93,6 +93,62 @@ const post = async (req, res) => {
             env === 'development' ? error.message : "Request failed"));
 };
 
+const put = async (req, res) => {
+    const id = req.params.id;
+
+    if (id === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't find study without the id");
+    }
+
+    // check authentication
+    await models.Study.findByPk(id).then(
+        study => {
+            if (!(req.auth && req.id === study.creatorId)) {
+                return helper.sendJsonResponse(res, 401, "Authentication error",
+                    "You must be logged as the study organizer to change the study data");
+            }
+        }
+    );
+
+    if (Object.keys(req.body).length === 0) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'The request body is empty'
+    });
+
+    // all fields are optional but one must be specified
+    const valuesDict = {
+        title: req.body.title,
+        description: req.body.description,
+        prerequisites: req.body.prerequisites,
+        capacity: req.body.capacity,
+        country: req.body.country,
+        city: req.body.city,
+        zip: req.body.zip,
+        street: req.body.street,
+        number: req.body.number,
+        additionalLocationInfo: req.body.additionalLocationInfo,
+        rewardCurrency: req.body.rewardCurrency,
+        rewardAmount: req.body.rewardAmount,
+        rewardType: req.body.rewardType,
+        published: req.body.published
+    };
+
+    // build update
+    Object.keys(valuesDict).forEach(key => {
+        if (valuesDict[key] === undefined) {
+            delete valuesDict[key];
+        }
+    });
+
+    // update fields
+    models.Study.update(valuesDict, {where:{id:id}})
+        .then(res.status(200).send())
+        .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
+            env === 'development' ? error.message : "Request failed"));
+
+    logger.info("Study with id " + id + " updated");
+};
 
 const searchStudy = async (req, res) => {
 
@@ -148,5 +204,6 @@ const searchStudy = async (req, res) => {
 module.exports = {
     get,
     post,
+    put,
     searchStudy
 };
