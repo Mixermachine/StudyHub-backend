@@ -4,9 +4,9 @@
 const models = require('../models');
 const helper = require('./helper');
 const env = require('../environment');
-
 const jwt = require('jsonwebtoken');
 const config = require('../config').config;
+const participant = require('./participant');
 
 const get = (req, res) => {
     const studyId = req.params.studyId;
@@ -87,7 +87,7 @@ const setStandardTimeslotValues = (timeslot, studyId) => {
     timeslot.studyId = studyId;
 };
 
-const put = (req, res) => {
+const put = async (req, res) => {
     const studyId = req.params.studyId;
     if (!studyId) {
         return helper.sendJsonResponse(res, 422, "Parameter studyId is missing",
@@ -98,6 +98,26 @@ const put = (req, res) => {
     if (!timeslotId) {
         return helper.sendJsonResponse(res, 422, "Parameter timeslotId is missing",
             "Can't update timeslot without the timeslotId.");
+    }
+
+    // make it possible to delete participantId from timeslot
+    if (req.body.participantId === '') {
+        req.body.participantId = null;
+    }
+
+    // check if participantId links to a participant
+    if (!(req.body.participantId === undefined || req.body.participantId === null)) {
+        let isParticipant = false;
+
+        // wait for query
+        await participant.isParticipant(req.body.participantId).then(result => {
+            isParticipant = result;
+        });
+
+        if (!isParticipant) {
+            return helper.sendJsonResponse(res, 404, "ParticipantId not found",
+                "User with id " + req.body.participantId + " is not a participant.");
+        }
     }
 
     models.Study.findByPk(studyId)
@@ -128,6 +148,14 @@ const put = (req, res) => {
             study.getTimeslots({where: {id: timeslotId}})
                 .then(timeslots => {
                     const timeslot = timeslots[0];
+
+                    // check if empty participantId is possible
+                    if (timeslot.attended) {
+                        return helper.sendJsonResponse(res, 403, "Forbidden",
+                            "This timeslot has already been attended." +
+                            "The participantId can't be changed after the timeslot has been attended.");
+                    }
+
                     Object.assign(timeslot, timeslotUpdate);
                     timeslot.save()
                         .then(() => res.status(200).send())
