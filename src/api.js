@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
 const middlewares = require('./middlewares');
+const logger = require('./logger');
 
 const auth = require('./routes/auth');
 const user = require('./routes/user');
@@ -29,11 +30,13 @@ api.get('/', (req, res) => {
     });
 });
 
+// API logger
+api.use(logger.logRestCall);
+
 // API routes
 api.use('/auth', auth);
 api.use('/user', user);
 api.use('/study', study);
-//api.use('/movies', movie);
 
 // finally, setup swagger
 swaggerDoc(api);
