@@ -10,8 +10,6 @@ const creatorController = require('../controllers/creator');
 const payeeController = require('../controllers/payee');
 const participantController = require('../controllers/participant');
 
-//router.post('/', middlewares.checkAuthentication, userController.create); // Create a new movie
-
 /**
  * @swagger
  * tags:
