@@ -187,11 +187,15 @@ const secretCheckin = (req, res) => {
             "To perform secretCheckin both studyId and timeslotId are needed");
     }
 
-    jwt.verify(req.params.token, config.secret, (err, decoded) => {
+    jwt.verify(req.params.token, config.jwtSecret, (err, decoded) => {
         if (err) {
-            return helper.sendJsonResponse(res, 401, "Failed to decrypt token",
-                "The token you provided could not be decrypted. " +
-                "This can either be caused by a expired or corrupted token");
+            if (err.message === "jwt expired") {
+                return helper.sendJsonResponse(res, 401, "Token expired",
+                    "The token you provided could not be decrypted as it is expired");
+            } else {
+                return helper.sendJsonResponse(res, 401, "Failed to decrypt token",
+                    "The token you provided could not be decrypted");
+            }
         }
 
         if (studyId !== decoded.studyId || timeslotId !== decoded.timeslotId) {
@@ -206,9 +210,11 @@ const secretCheckin = (req, res) => {
                         .then(timeslots => {
                             if (timeslots) {
                                 timeslots[0].attended = true;
-                                timeslots[0].save();
+                                timeslots[0].save()
+                                    .then(() => res.status(200)
+                                        .json({message: "Timeslot has been marked attended successfully"}));
                             }
-                        })
+                        });
                 }
             })
             .catch(error => helper.sendJsonResponse(res, 500, 'Internal Server Error',
