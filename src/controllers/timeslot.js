@@ -151,7 +151,7 @@ const generateSecretCheckin = (req, res) => {
     models.Study.findByPk(studyId)
         .then((study) => {
             if (study) {
-                if (study.creatorId !== req.id) {
+                if (study.creatorId === req.id) {
                     return helper.sendJsonResponse(res, 401, "Unauthorized",
                         "Only the creator of the study can generate a secureCheckin");
                 }
