@@ -76,12 +76,32 @@ router.post('/', userController.create);
 /**
  * @swagger
  *
- * /user/{id}:
+ * /user/:
  *   get:
- *     description: Get data of user. With optional authentication the email will be provided.
+ *     description: Get data of logged in user.
  *     tags: [User]
  *     security:
- *     - {}
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/', middlewares.checkAuthentication, userController.get);
+
+/**
+ * @swagger
+ *
+ * /user/{id}:
+ *   get:
+ *     description: Get data of user. Admin api.
+ *     tags: [User]
+ *     security:
  *     - BearerAuth: []
  *     produces:
  *       - application/json
