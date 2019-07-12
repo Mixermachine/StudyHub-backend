@@ -25,7 +25,7 @@ logger.getContextLogger = (context) => {
 
     newLogger.logRestCall = (req, res, next) => {
         req.uuid = uuidv4();
-        newLogger.httpWithUuid(req, {url: req.originalUrl});
+        newLogger.httpWithUuid(req, {method: req.method, url: req.originalUrl});
 
         next();
     };
