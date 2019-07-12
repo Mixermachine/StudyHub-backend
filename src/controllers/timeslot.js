@@ -3,7 +3,10 @@
 
 const models = require('../models');
 const helper = require('./helper');
-const env = process.env.NODE_ENV || 'development';
+const env = require('../environment');
+
+const jwt = require('jsonwebtoken');
+const config = require('../config').config;
 
 const get = (req, res) => {
     const studyId = req.params.studyId;
@@ -72,9 +75,9 @@ const post = (req, res) => {
             });
             return res.status(200).send({ids: ids});
         })
-        .catch(err => {
+        .catch(error => {
             return helper.sendJsonResponse(res, 500, "Internal server error",
-                env === "development" ? err.message : undefined)
+                env.maskMsgIfNotDev(error.message));
         });
 };
 
@@ -131,13 +134,103 @@ const put = (req, res) => {
                         .then(() => res.status(200).send())
                 });
         })
-        .catch(err =>
+        .catch(error =>
             helper.sendJsonResponse(res, 500, "Internal server error",
-                env === "development", err.message, undefined));
+                env.maskMsgIfNotDev(error.message)));
+};
+
+const generateSecretCheckin = (req, res) => {
+    const studyId = req.params.studyId;
+    const timeslotId = req.params.timeslotId;
+
+    if (!studyId || !timeslotId) {
+        return helper.sendJsonResponse(res, 422, "Parameter missing",
+            "To generate secretCheckin both studyId and timeslotId are needed");
+    }
+
+    models.Study.findByPk(studyId)
+        .then((study) => {
+            if (study) {
+                if (study.creatorId !== req.id) {
+                    return helper.sendJsonResponse(res, 401, "Unauthorized",
+                        "Only the creator of the study can generate a secureCheckin");
+                }
+
+                study.getTimeslots({where: {id: timeslotId}})
+                    .then(timeslots => {
+                        if (timeslots) {
+                            if (timeslots[0].participantId === null) {
+                                return helper.sendJsonResponse(res, 405, "Timeslot has no participant",
+                                    "To generate secureCheckin the timeslot has to be assigned to a participant");
+                            }
+
+                            if (timeslots[0].attended) {
+                                return helper.sendJsonResponse(res, 405, "Timeslot has already been attended",
+                                    "Student in timeslot has already attended the timeslot. " +
+                                    "Can't create a secureCheckin for an already attended timeslot");
+                            }
+
+                            const token = jwt.sign({studyId: studyId, timeslotId: timeslotId}, config.jwtSecret, {
+                                expiresIn: 20 // expires in 20 seconds
+                            });
+
+                            res.status(200).json({token: token});
+                        }
+                    })
+            }
+        })
+        .catch(error => helper.sendJsonResponse(res, 500, 'Internal Server Error',
+            env.maskMsgIfNotDev(error.message)));
+};
+
+const secretCheckin = (req, res) => {
+    const studyId = req.params.studyId;
+    const timeslotId = req.params.timeslotId;
+
+    if (!studyId || !timeslotId) {
+        return helper.sendJsonResponse(res, 422, "Parameter missing",
+            "To perform secretCheckin both studyId and timeslotId are needed");
+    }
+
+    jwt.verify(req.params.token, config.jwtSecret, (err, decoded) => {
+        if (err) {
+            if (err.message === "jwt expired") {
+                return helper.sendJsonResponse(res, 401, "Token expired",
+                    "The token you provided could not be decrypted as it is expired");
+            } else {
+                return helper.sendJsonResponse(res, 401, "Failed to decrypt token",
+                    "The token you provided could not be decrypted");
+            }
+        }
+
+        if (studyId !== decoded.studyId || timeslotId !== decoded.timeslotId) {
+            return helper.sendJsonResponse(res, 401, "Token did not match",
+                "The encrypted ids in the token did not match the provided ids in the url");
+        }
+
+        models.Study.findByPk(studyId)
+            .then((study) => {
+                if (study) {
+                    study.getTimeslots({where: {id: timeslotId}})
+                        .then(timeslots => {
+                            if (timeslots) {
+                                timeslots[0].attended = true;
+                                timeslots[0].save()
+                                    .then(() => res.status(200)
+                                        .json({message: "Timeslot has been marked attended successfully"}));
+                            }
+                        });
+                }
+            })
+            .catch(error => helper.sendJsonResponse(res, 500, 'Internal Server Error',
+                env.maskMsgIfNotDev(error.message)));
+    });
 };
 
 module.exports = {
     get,
     post,
-    put
+    put,
+    generateSecretCheckin,
+    secretCheckin
 };

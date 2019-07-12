@@ -46,6 +46,62 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
 /**
  * @swagger
  *
+ * /study:
+ *   get:
+ *     description: Search for studies
+ *     tags: [Study]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *        - in: query
+ *          name: searchText
+ *          schema:
+ *            type: string
+ *          description: Text input matched to title, description and keywords
+ *          example: Games
+ *        - in: query
+ *          name: city
+ *          schema:
+ *            type: string
+ *          description: The city where the study takes place
+ *          example: Garching
+ *        - in: query
+ *          name: zip
+ *          schema:
+ *            type: string
+ *          description: The zip code where the study takes place
+ *          example: 85748
+ *        - in: query
+ *          name: organizer
+ *          schema:
+ *            type: string
+ *          description: The type of organizer of the study
+ *          example: s
+ *        - in: query
+ *          name: minReward
+ *          schema:
+ *            type: integer
+ *          description: The minimum reward of the study
+ *          example: 5
+ *        - in: query
+ *          name: rewardType
+ *          schema:
+ *            type: string
+ *          description: The type of the reward of the study
+ *          example: v
+ *     responses:
+ *       200:
+ *         description: search successful
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('', studyController.searchStudy);
+
+/**
+ * @swagger
+ *
  * /study/:
  *   post:
  *     description: Create a study
@@ -311,57 +367,75 @@ router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, t
 /**
  * @swagger
  *
- * /study:
+ * /study/{studyId}/timeslot/{timeslotId}/generateSecureCheckin:
  *   get:
- *     description: Search for studies
+ *     description: Generate
  *     tags: [Study]
- *     consumes:
- *       - application/json
+ *     security:
+ *     - BearerAuth: []
  *     produces:
  *       - application/json
  *     parameters:
- *        - in: query
- *          name: searchText
- *          schema:
- *            type: string
- *          description: Text input matched to title, description and keywords
- *          example: Games
- *        - in: query
- *          name: city
- *          schema:
- *            type: string
- *          description: The city where the study takes place
- *          example: Garching
- *        - in: query
- *          name: zip
- *          schema:
- *            type: string
- *          description: The zip code where the study takes place
- *          example: 85748
- *        - in: query
- *          name: organizer
- *          schema:
- *            type: string
- *          description: The type of organizer of the study
- *          example: s
- *        - in: query
- *          name: minReward
- *          schema:
- *            type: integer
- *          description: The minimum reward of the study
- *          example: 5
- *        - in: query
- *          name: rewardType
- *          schema:
- *            type: string
- *          description: The type of the reward of the study
- *          example: v
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: timeslotId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     responses:
  *       200:
- *         description: search successful
+ *         description: created
+ *       401:
+ *         description: unauthorized
  *       501:
  *         description: not all fields provided
  */
-router.get('', studyController.searchStudy);
+router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.checkAuthentication, timeslotController.generateSecretCheckin);
+
+/**
+ * @swagger
+ *
+ * /study/{studyId}/timeslot/{timeslotId}/secureCheckin/{token}:
+ *   get:
+ *     description: Generate
+ *     tags: [Study]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: timeslotId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: aksjdujhduehu1h3u21h3u1uihuisdhf
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/timeslot/:timeslotId/secureCheckin/:token', timeslotController.secretCheckin);
+
+
 
 module.exports = router;
