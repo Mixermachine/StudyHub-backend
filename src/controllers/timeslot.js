@@ -159,6 +159,11 @@ const generateSecretCheckin = (req, res) => {
                 study.getTimeslots({where: {id: timeslotId}})
                     .then(timeslots => {
                         if (timeslots) {
+                            if (timeslots[0].participantId !== null) {
+                                return helper.sendJsonResponse(res, 405, "Timeslot has no participant",
+                                    "To generate secureCheckin the timeslot has to be assigned to a participant");
+                            }
+
                             if (timeslots[0].attended) {
                                 return helper.sendJsonResponse(res, 405, "Timeslot has already been attended",
                                     "Student in timeslot has already attended the timeslot. " +
