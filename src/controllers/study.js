@@ -1,7 +1,7 @@
 "use strict";
 
 const models = require('../models');
-const env = process.env.NODE_ENV || 'development';
+const env = require('../environment');
 const logger = require('./../logger');
 const helper = require('./helper');
 const creator = require('./creator');
@@ -90,7 +90,7 @@ const post = async (req, res) => {
             }
         })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
-            env === 'development' ? error.message : "Request failed"));
+            env.maskMsgIfNotDev(error.message)));
 };
 
 const put = async (req, res) => {
@@ -145,7 +145,7 @@ const put = async (req, res) => {
     models.Study.update(valuesDict, {where:{id:id}})
         .then(res.status(200).send())
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
-            env === 'development' ? error.message : "Request failed"));
+            env.maskMsgIfNotDev(error.message)));
 
     logger.info("Study with id " + id + " updated");
 };
@@ -197,7 +197,7 @@ const searchStudy = async (req, res) => {
             res.status(200).json(result)
         })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
-            env === 'development' ? error.message : "Request failed"));
+            env.maskMsgIfNotDev(error.message)));
 
 };
 
