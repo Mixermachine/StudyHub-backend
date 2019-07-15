@@ -10,6 +10,8 @@ const creatorController = require('../controllers/creator');
 const payeeController = require('../controllers/payee');
 const participantController = require('../controllers/participant');
 
+const payoutMethodController = require('../controllers/payoutMethod');
+
 //router.post('/', middlewares.checkAuthentication, userController.create); // Create a new movie
 
 /**
@@ -365,5 +367,166 @@ router.post('/participant/:id', middlewares.checkAuthentication, participantCont
  *         description: id not provided
  */
 router.put('/:id', middlewares.checkAuthentication, userController.put);
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/payout-method:
+ *   post:
+ *     description: Create a new payout method
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - rewardTypeId
+ *               - paymentInfo
+ *             properties:
+ *               rewardTypeId:
+ *                 type: string
+ *               paymentInfo:
+ *                 type: string
+ *             example: {
+ *               "rewardTypeId": "1",
+ *               "paymentInfo": "paypal@me.com"
+ *             }
+ *     responses:
+ *       200:
+ *         description: created
+ *       501:
+ *         description: not all fields provided
+ */
+router.post('/:userId/payout-method', middlewares.checkAuthentication, payoutMethodController.create);
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/payout-method/:
+ *   get:
+ *     description: Get payment methods of user
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:userId/payout-method/', middlewares.checkAuthentication, payoutMethodController.get);
+
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/payout-method/{payoutMethodId}:
+ *   get:
+ *     description: Get specific payment method of user
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: payoutMethodId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:userId/payout-method/:payoutMethodId', middlewares.checkAuthentication, payoutMethodController.get);
+
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/payout-method/{payoutMethodId}:
+ *   put:
+ *     description: Change payment method of a user
+ *     tags: [User]
+ *     security:
+ *       - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: payoutMethodId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - paymentInfo
+ *             properties:
+ *               rewardTypeId:
+ *                 type: string
+ *               paymentInfo:
+ *                 type: string
+ *             example: {
+ *               "rewardTypeId": "1",
+ *               "paymentInfo": "paypal@me.com"
+ *             }
+ *     responses:
+ *       200:
+ *         description: update successful
+ *       501:
+ *         description: id not provided
+ */
+router.put('/:userId/payout-method/:payoutMethodId', middlewares.checkAuthentication, payoutMethodController.put);
 
 module.exports = router;

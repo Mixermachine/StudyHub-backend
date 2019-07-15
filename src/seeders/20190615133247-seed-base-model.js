@@ -2,6 +2,8 @@
 
 const userIds = [2147400001, 2147400002, 2147400003, 2147400004];
 const studyIds = [2147400001, 2147400002, 2147400003];
+const rewardTypeIds = [2147400001, 2147400002, 2147400003];
+const payoutMethodIds = [2147400001, 2147400002];
 
 
 module.exports = {
@@ -98,7 +100,6 @@ module.exports = {
                     '}',
                 rewardCurrency: "EUR",
                 rewardAmount: "5.0",
-                rewardType: "d",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[2],
                 payeeId: userIds[2]
@@ -116,7 +117,6 @@ module.exports = {
                 additionalLocationInfo: '{}',
                 rewardCurrency: "EUR",
                 rewardAmount: "10.0",
-                rewardType: "l",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[3],
                 payeeId: userIds[3]
@@ -136,7 +136,6 @@ module.exports = {
                     '}',
                 rewardCurrency: "USD",
                 rewardAmount: "7.5",
-                rewardType: "v",     //d=direct, l=lottery, v=voucher, n=none
                 published: 'true',
                 creatorId: userIds[2],
                 payeeId: userIds[3]
@@ -175,18 +174,49 @@ module.exports = {
 
             ], {})
         }).then(() => {
+            return queryInterface.bulkInsert('RewardTypes', [{
+                id: rewardTypeIds[0],
+                name: 'Paypal'
+            }, {
+                id: rewardTypeIds[1],
+                name: 'IBAN'
+            }, {
+                id: rewardTypeIds[2],
+                name: 'Amazon gift card'
+            }
+
+            ], {})
+        }).then(() => {
+            return queryInterface.bulkInsert('PayoutMethods', [{
+                id: payoutMethodIds[0],
+                date: '2019-06-06',
+                participantId: userIds[0],
+                rewardTypeId: rewardTypeIds[0],
+                paymentInfo: 'test@test.com'
+            }, {
+                id: payoutMethodIds[1],
+                date: '2019-07-07',
+                participantId: userIds[1],
+                rewardTypeId: rewardTypeIds[1],
+                paymentInfo: 'test2@test.com'
+            }
+
+            ], {})
+        }).then(() => {
             return queryInterface.bulkInsert('Timeslots', [{
                 start: '2019-06-25 12:00:00',
                 stop: '2019-06-25 12:30:00',
                 attended: 'true',
                 studyId: studyIds[0],
-                participantId: userIds[0]
+                participantId: userIds[0],
+                payoutMethodId: payoutMethodIds[0]
             }, {
                 start: '2019-06-26 12:30:00',
                 stop: '2019-06-26 13:00:00',
                 attended: 'false',
                 studyId: studyIds[0],
-                participantId: userIds[1]
+                participantId: userIds[1],
+                payoutMethodId: payoutMethodIds[1]
             }, {
                 start: '2019-06-26 13:00:00',
                 stop: '2019-06-26 13:30:00',
@@ -197,7 +227,8 @@ module.exports = {
                 stop: '2019-06-25 12:30:00',
                 attended: 'true',
                 studyId: studyIds[1],
-                participantId: userIds[0]
+                participantId: userIds[0],
+                payoutMethodId: payoutMethodIds[0]
             }, {
                 start: '2019-06-30 12:30:00',
                 stop: '2019-06-30 13:00:00',
@@ -208,7 +239,8 @@ module.exports = {
                 stop: '2019-06-30 13:30:00',
                 attended: 'false',
                 studyId: studyIds[1],
-                participantId: userIds[1]
+                participantId: userIds[1],
+                payoutMethodId: payoutMethodIds[1]
             }, {
                 start: '2019-06-30 12:00:00',
                 stop: '2019-06-30 12:30:00',
@@ -224,7 +256,8 @@ module.exports = {
                 stop: '2019-06-26 13:30:00',
                 attended: 'false',
                 studyId: studyIds[2],
-                participantId: userIds[1]
+                participantId: userIds[1],
+                payoutMethodId: payoutMethodIds[1]
             }
 
             ], {})
@@ -233,11 +266,21 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
 
-
         return queryInterface.bulkDelete(
             'Timeslots',
             {studyId: {[Sequelize.Op.in]: studyIds}}
+
         ).then(() => {
+            return queryInterface.bulkDelete(
+                'PayoutMethods',
+                {id: {[Sequelize.Op.in]: payoutMethodIds}}
+            )
+        }).then(() => {
+            return queryInterface.bulkDelete(
+                'RewardTypes',
+                {id: {[Sequelize.Op.in]: rewardTypeIds}}
+            )
+        }).then(() => {
             return queryInterface.bulkDelete(
                 'StudyKeywords',
                 {studyId: {[Sequelize.Op.in]: studyIds}}

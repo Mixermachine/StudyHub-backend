@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         // primaryKey id will be auto generated
         start: DataTypes.DATE,
         stop: DataTypes.DATE,
-        attended: DataTypes.BOOLEAN
+        attended: DataTypes.BOOLEAN,
     }, {
         timestamps: false
     });
@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
 
         Timeslot.belongsTo(models.Participant, {
             foreignKey: 'participantId',
+            allowNull: true
+        });
+
+        Timeslot.belongsTo(models.PayoutMethod, {
+            foreignKey: 'payoutMethodId',
             allowNull: true
         });
     };

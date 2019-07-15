@@ -17,7 +17,7 @@ const get = (req, res) => {
 
     const timeslotId = req.params.timeslotId;
 
-    const attributes = ['id', 'start', 'stop', 'attended', 'studyId', 'participantId'];
+    const attributes = ['id', 'start', 'stop', 'attended', 'studyId', 'participantId', 'payoutMethodId'];
 
     // get study first so we get the id of the study creator
     models.Study.findByPk(studyId)
@@ -51,6 +51,7 @@ const get = (req, res) => {
 const removePersonalData = (timeslot) => {
     timeslot.reserved = timeslot.participantId !== null;
     delete timeslot.participantId;
+    delete timeslot.payoutMethodId;
 };
 
 const post = (req, res) => {
@@ -84,6 +85,7 @@ const post = (req, res) => {
 const setStandardTimeslotValues = (timeslot, studyId) => {
     timeslot.attended = false;
     timeslot.participantId = undefined;
+    timeslot.payoutMethodId = undefined;
     timeslot.studyId = studyId;
 };
 

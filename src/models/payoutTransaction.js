@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     PayoutTransaction.associate = function (models) {
         // associations can be defined here
-        PayoutTransaction.belongsTo(models.PayoutReward, {
-            foreignKey: 'payoutRewardId'
+        PayoutTransaction.belongsTo(models.PayoutMethod, {
+            foreignKey: 'payoutMethodId'
         });
 
         PayoutTransaction.belongsTo(models.Study, {

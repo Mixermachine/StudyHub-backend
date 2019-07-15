@@ -433,6 +433,7 @@ router.post('/:studyId/timeslot/', middlewares.checkAuthentication, timeslotCont
  *               - start
  *               - stop
  *               - participantId
+ *               - payoutMethodId
  *             properties:
  *               start:
  *                 type: string
@@ -442,10 +443,13 @@ router.post('/:studyId/timeslot/', middlewares.checkAuthentication, timeslotCont
  *                 format: date-time
  *               participantId:
  *                 type: integer
+ *               payoutMethodId:
+ *                 type: integer
  *             example: {
  *	             "start": "2019-07-07 10:30:00",
  *               "stop": "2019-07-07 11:30:00",
- *               "participantId": 1
+ *               "participantId": 1,
+ *               "payoutMethodId": 1
  *             }
  *     responses:
  *       200:
