@@ -4,14 +4,17 @@ const models = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
-const logger = require('./../logger');
 const helper = require('./helper');
+const logger = require('../logger.js')(__filename.split(/[\\/]/).slice(-2).join('/'));
 
 const create = async (req, res) => {
-    if (Object.keys(req.body).length === 0) return res.status(400).json({
-        error: 'Bad Request',
-        message: 'The request body is empty'
-    });
+    if (Object.keys(req.body).length === 0) {
+        logger.infoWithUuid(req, "Body empty");
+        return res.status(400).json({
+            error: 'Bad Request',
+            message: 'The request body is empty'
+        });
+    }
 
     // all of this fields are mandatory
     const valuesDict = {
@@ -34,15 +37,15 @@ const create = async (req, res) => {
 
     // Return 400 and break if not all provided
     if (incomplete) {
-        helper.sendJsonResponse(res, 400, "Malformed request", "Not all fields provided");
-        return;
+        logger.infoWithUuid(req, "Not all fields provided");
+        return helper.sendJsonResponse(res, 400, "Malformed request", "Not all fields provided");
     }
 
     // Check if email of new user already exists in database
     if (await models.User.count({where: {email: valuesDict['email']}})) {
         // Return conflict as email already exists
-        helper.sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
-        return;
+        logger.infoWithUuid(req, "Email address already exists in database");
+        return helper.sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
     }
 
     // Set createdOn and modifiedOn fields
@@ -56,13 +59,15 @@ const create = async (req, res) => {
     models.User.create(valuesDict)
         .then(x => {
             if (x) {
+                logger.infoWithUuid(req, "Created user " + valuesDict['email']);
                 res.status(200).json({id: x.id});
             }
         })
-        .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
-            env === 'development' ? error.message : "Request failed"));
-
-    logger.info("Created user " + valuesDict['email']);
+        .catch(error => {
+            logger.errorWithUuid(req, error);
+            helper.sendJsonResponse(res, 500, "Internal server error",
+                env === 'development' ? error.message : "Request failed")
+        });
 };
 
 const get = async (req, res) => {
@@ -72,6 +77,7 @@ const get = async (req, res) => {
     }
 
     if (id !== req.id) {
+        logger.infoWithUuid(req, "User unauthorized");
         return helper.sendJsonResponse(res, 401, "Unauthorized",
             "You can not access user data of other users");
     }
@@ -80,6 +86,7 @@ const get = async (req, res) => {
         attributes: ['id', 'firstName', 'lastName', 'DoB', 'gender', 'email', 'createdOn', 'modifiedOn']
     }).then(user => {
         if (!user) {
+            logger.infoWithUuid(req, "Id " + id + " not found");
             return helper.sendJsonResponse(res, 404, "Not found",
                 "User with id " + id + " was not found")
         }
@@ -89,6 +96,7 @@ const get = async (req, res) => {
             user.email = user.createdOn = user.modifiedOn = "hidden";
         }
 
+        logger.infoWithUuid(req, "User " + id + " returned");
         res.status(200).json(user);
     });
 };
@@ -97,14 +105,18 @@ const put = async (req, res) => {
     const id = req.params.id;
 
     if (id === undefined) {
+        logger.infoWithUuid(req, "Id not provided");
         return helper.sendJsonResponse(res, 422, "Parameter id is missing",
             "Can't find user without the id");
     }
 
-    if (Object.keys(req.body).length === 0) return res.status(400).json({
-        error: 'Bad Request',
-        message: 'The request body is empty'
-    });
+    if (Object.keys(req.body).length === 0) {
+        logger.infoWithUuid(req, "Body empty");
+        return res.status(400).json({
+            error: 'Bad Request',
+            message: 'The request body is empty'
+        });
+    }
 
     // all fields are optional but one must be specified
     const valuesDict = {
@@ -118,6 +130,7 @@ const put = async (req, res) => {
 
     // check authentication
     if (!(req.auth && req.id == id)) {
+        logger.infoWithUuid(req, "req.id " + req.id + " was declined access to " + id);
         return helper.sendJsonResponse(res, 401, "Authentication error",
             "You must be logged in to change your user data");
     }
@@ -127,8 +140,8 @@ const put = async (req, res) => {
         // Check if changed email already exists in database
         if (await models.User.count({where: {email: valuesDict['email']}})) {
             // Return conflict as email already exists
-            helper.sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
-            return;
+            logger.infoWithUuid(req, "conflicting email " + valuesDict['email']);
+            return helper.sendJsonResponse(res, 409, "Conflict", "Email address already exists in database");
         }
     }
 
@@ -151,12 +164,18 @@ const put = async (req, res) => {
     });
 
     // update fields
-    models.User.update(valuesDict, {where:{id:id}})
-        .then(res.status(200).send())
-        .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
-            env === 'development' ? error.message : "Request failed"));
-
-    logger.info("User with id " + id + " updated");
+    models.User.update(valuesDict, {where: {id: id}})
+        .then(x => {
+            if (x) {
+                logger.infoWithUuid(req, "user " + id + " was updated");
+                res.status(200).send()
+            }
+        })
+        .catch(error => {
+            logger.errorWithUuid(req, error);
+            helper.sendJsonResponse(res, 500, "Internal server error",
+                env === 'development' ? error.message : "Request failed")
+        });
 };
 
 module.exports = {
