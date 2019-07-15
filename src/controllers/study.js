@@ -173,7 +173,7 @@ const searchStudy = async (req, res) => {
     orWhere.push({'$StudyKeywords.keyword$': {[Op.in]: valuesDict['searchText'].toLowerCase().split(' ')}}); // check keywords, keywords must be saved lower case
 
     const andWhere = {[Op.or]: orWhere};
-    andWhere['published'] = {[Op.eq]: 'true'}
+    andWhere['published'] = {[Op.eq]: 'true'};
     if (valuesDict['city'] !== undefined) {
         andWhere['city'] = {[Op.iLike]: "%" + valuesDict['city'] + "%"}; // check city
     }
@@ -191,10 +191,12 @@ const searchStudy = async (req, res) => {
     }
 
     models.Study.findAll({where: andWhere, include: [{model: models.StudyKeyword, attributes: []}, {model: models.Creator, attributes: ['organizerType']}],
-        attributes: ['title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'rewardType']})
-        .then(result => {
-
-            res.status(200).json(result)
+        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'rewardType']
+    })
+        .then(results => {
+            if (results) {
+                res.status(200).json(results);
+            }
         })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
             env === 'development' ? error.message : "Request failed"));
