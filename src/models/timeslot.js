@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'participantId',
             allowNull: true
         });
+
+        Timeslot.belongsTo(models.PayoutMethod, {
+            foreignKey: 'payoutMethodId',
+            allowNull: true
+        });
     };
     return Timeslot;
 };

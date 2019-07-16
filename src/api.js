@@ -10,6 +10,7 @@ const logger = require('./logger')("rest_collecter");
 const auth = require('./routes/auth');
 const user = require('./routes/user');
 const study = require('./routes/study');
+const reward = require('./routes/reward');
 
 const swaggerDoc = require('./swaggerDoc');
 
@@ -37,6 +38,8 @@ api.use(logger.logRestCall);
 api.use('/auth', auth);
 api.use('/user', user);
 api.use('/study', study);
+api.use('/reward', reward);
+//api.use('/movies', movie);
 
 // finally, setup swagger
 swaggerDoc(api);
