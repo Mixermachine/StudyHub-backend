@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         // primaryKey id will be auto generated
         start: DataTypes.DATE,
         stop: DataTypes.DATE,
-        attended: DataTypes.BOOLEAN,
+        attended: DataTypes.BOOLEAN
     }, {
         timestamps: false
     });
