@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: true
         },
         keyword: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             primaryKey: true
         }
     }, {

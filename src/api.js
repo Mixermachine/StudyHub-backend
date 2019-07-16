@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
 const middlewares = require('./middlewares');
+const logger = require('./logger')("rest_collecter");
 
 const auth = require('./routes/auth');
 const user = require('./routes/user');
@@ -29,6 +30,9 @@ api.get('/', (req, res) => {
         name: 'SEBA Master Movie Backend'
     });
 });
+
+// API logger
+api.use(logger.logRestCall);
 
 // API routes
 api.use('/auth', auth);

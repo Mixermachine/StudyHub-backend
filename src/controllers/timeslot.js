@@ -7,6 +7,7 @@ const env = require('../environment');
 const jwt = require('jsonwebtoken');
 const config = require('../config').config;
 const participant = require('./participant');
+const study = require('./study');
 
 const get = (req, res) => {
     const studyId = req.params.studyId;
@@ -102,70 +103,87 @@ const put = async (req, res) => {
             "Can't update timeslot without the timeslotId.");
     }
 
-    // make it possible to delete participantId from timeslot
-    if (req.body.participantId === '') {
-        req.body.participantId = null;
-    }
+    study.getAvailableCapacity(studyId)
+        .then(async availableCapacity => {
 
-    // check if participantId links to a participant
-    if (!(req.body.participantId === undefined || req.body.participantId === null)) {
-        let isParticipant = false;
-
-        // wait for query
-        await participant.isParticipant(req.body.participantId).then(result => {
-            isParticipant = result;
-        });
-
-        if (!isParticipant) {
-            return helper.sendJsonResponse(res, 404, "ParticipantId not found",
-                "User with id " + req.body.participantId + " is not a participant.");
-        }
-    }
-
-    models.Study.findByPk(studyId)
-        .then(study => {
-            const timeslotUpdate = req.body;
-
-            // studyId should not be changed.
-            // This could be really bad (creators moving slots to another study so they don't have to pay)
-            if (timeslotUpdate.studyId !== undefined) {
-                return helper.sendJsonResponse(res, 403, "Forbidden",
-                    "You can not change the studyId of a timeslot.")
+            if (availableCapacity === null || availableCapacity === undefined) {
+                return helper.sendJsonResponse(res, 404, "Study not found",
+                    "The provided studyId does belong to no study");
             }
 
-            // id should never be changed, as references could become invalid
-            if (timeslotUpdate.id !== undefined) {
-                return helper.sendJsonResponse(res, 403, "Forbidden",
-                    "You can not change the id of a timeslot.")
+            if (!availableCapacity > 0) {
+                return helper.sendJsonResponse(res, 405, "Not capacity available",
+                    "The study available capacity of this study has been reached. " +
+                    "New participant can only take part if the capacity is increased or other participants no longer participate");
             }
 
-            // if public user check values first
-            if (study.creatorId !== req.id &&
-                (Object.keys(timeslotUpdate).length !== 1 || timeslotUpdate.participantId !== req.id)) {
-                return helper.sendJsonResponse(res, 401, "Unauthorized",
-                    "If you are not the study creator your put should only contain the " +
-                    "field participantId with your own id.");
+            // make it possible to delete participantId from timeslot
+            if (req.body.participantId === '') {
+                req.body.participantId = null;
             }
 
-            study.getTimeslots({where: {id: timeslotId}})
-                .then(timeslots => {
-                    const timeslot = timeslots[0];
+            // check if participantId links to a participant
+            if (!(req.body.participantId === undefined || req.body.participantId === null)) {
+                let isParticipant = false;
 
-                    // check if empty participantId is possible
-                    if (timeslot.attended) {
+                // wait for query as we are in a if branch, we need to directly await result
+                await participant.isParticipant(req.body.participantId).then(result => {
+                    isParticipant = result;
+                });
+
+                if (!isParticipant) {
+                    return helper.sendJsonResponse(res, 404, "ParticipantId not found",
+                        "User with id " + req.body.participantId + " is not a participant.");
+                }
+            }
+
+            models.Study.findByPk(studyId)
+                .then(study => {
+                    const timeslotUpdate = req.body;
+
+                    // studyId should not be changed.
+                    // This could be really bad (creators moving slots to another study so they don't have to pay)
+                    if (timeslotUpdate.studyId !== undefined) {
                         return helper.sendJsonResponse(res, 403, "Forbidden",
-                            "This timeslot has already been attended." +
-                            "The participantId can't be changed after the timeslot has been attended.");
+                            "You can not change the studyId of a timeslot.")
                     }
 
-                    Object.assign(timeslot, timeslotUpdate);
-                    timeslot.save()
-                        .then(() => res.status(200).send())
-                });
-        })
-        .catch(error =>
-            helper.sendJsonResponse(res, 500, "Internal server error",
-                env.maskMsgIfNotDev(error.message)));
+                    // id should never be changed, as references could become invalid
+                    if (timeslotUpdate.id !== undefined) {
+                        return helper.sendJsonResponse(res, 403, "Forbidden",
+                            "You can not change the id of a timeslot.")
+                    }
+
+                    // if public user check values first
+                    if (study.creatorId !== req.id &&
+                        (Object.keys(timeslotUpdate).length !== 1 || timeslotUpdate.participantId !== req.id)) {
+                        return helper.sendJsonResponse(res, 401, "Unauthorized",
+                            "If you are not the study creator your put should only contain the " +
+                            "field participantId with your own id.");
+                    }
+
+                    study.getTimeslots({where: {id: timeslotId}})
+                        .then(timeslots => {
+                            const timeslot = timeslots[0];
+
+                            // check if empty participantId is possible
+                            if (timeslot.attended) {
+                                return helper.sendJsonResponse(res, 403, "Forbidden",
+                                    "This timeslot has already been attended." +
+                                    "The participantId can't be changed after the timeslot has been attended.");
+                            }
+
+                            Object.assign(timeslot, timeslotUpdate);
+                            timeslot.save()
+                                .then(() => res.status(200).send())
+                        });
+                })
+                .catch(error =>
+                    helper.sendJsonResponse(res, 500, "Internal server error",
+                        env.maskMsgIfNotDev(error.message)));
+        });
+
+
 };
 
 const generateSecretCheckin = (req, res) => {
