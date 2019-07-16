@@ -491,7 +491,8 @@ router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, t
  *       501:
  *         description: not all fields provided
  */
-router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.checkAuthentication, timeslotController.generateSecretCheckin);
+router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.checkAuthentication,
+    timeslotController.generateSecretCheckin);
 
 /**
  * @swagger
@@ -530,6 +531,30 @@ router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.c
  *         description: not all fields provided
  */
 router.get('/:studyId/timeslot/:timeslotId/secureCheckin/:token', timeslotController.secretCheckin);
+
+/**
+ * @swagger
+ *
+ * /study/{studyId}/availableCapacity/:
+ *   get:
+ *     description: Get available capacity of study.
+ *     tags: [Study]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       422:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/availableCapacity/', studyController.availableCapacity);
 
 
 
