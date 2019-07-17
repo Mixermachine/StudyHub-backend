@@ -81,7 +81,6 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *               - number
  *               - rewardCurrency
  *               - rewardAmount
- *               - rewardType
  *               - published
  *             properties:
  *               title:
@@ -106,8 +105,6 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *                 type: string
  *               rewardAmount:
  *                 type: double
- *               rewardType:
- *                 type: string
  *               published:
  *                 type: boolean
  *             example: {
@@ -123,7 +120,6 @@ router.get('/:studyId', middlewares.checkAuthenticationOptional, studyController
  *               "additionalLocationInfo": "{}",
  *               "rewardCurrency": "EUR",
  *               "rewardAmount": "5.0",
- *               "rewardType": "d",
  *               "published": "true"
  *             }
  *     responses:
@@ -176,12 +172,6 @@ router.put('/:id', middlewares.checkAuthentication, studyController.put);
  *            type: integer
  *          description: The minimum reward of the study
  *          example: 5
- *        - in: query
- *          name: rewardType
- *          schema:
- *            type: string
- *          description: The type of the reward of the study
- *          example: v
  *     responses:
  *       200:
  *         description: search successful
@@ -221,7 +211,6 @@ router.get('', studyController.searchStudy);
  *               - number
  *               - rewardCurrency
  *               - rewardAmount
- *               - rewardType
  *               - published
  *               - payeeId
  *             optional:
@@ -249,8 +238,6 @@ router.get('', studyController.searchStudy);
  *                 type: string
  *               rewardAmount:
  *                 type: double
- *               rewardType:
- *                 type: string
  *               published:
  *                 type: boolean
  *               payeeId:
@@ -268,7 +255,6 @@ router.get('', studyController.searchStudy);
  *               "additionalLocationInfo": "{}",
  *               "rewardCurrency": "EUR",
  *               "rewardAmount": "5.0",
- *               "rewardType": "d",
  *               "published": "true",
  *	             "payeeId": "2147400002"
  *             }
