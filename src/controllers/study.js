@@ -17,7 +17,7 @@ const get = (req, res) => {
 
     models.Study.findByPk(studyId, {
         attributes: ['title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
-            'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'rewardType', 'published', 'creatorId', 'payeeId']
+            'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId']
     }).then(study => {
         if (!study || !study.published) {
             return helper.sendJsonResponse(res, 404, "Not found",
@@ -53,7 +53,6 @@ const post = async (req, res) => {
         number: req.body.number,
         rewardCurrency: req.body.rewardCurrency,
         rewardAmount: req.body.rewardAmount,
-        rewardType: req.body.rewardType,
         published: req.body.published,
         payeeId: req.body.payeeId
     };
@@ -130,7 +129,6 @@ const put = async (req, res) => {
         additionalLocationInfo: req.body.additionalLocationInfo,
         rewardCurrency: req.body.rewardCurrency,
         rewardAmount: req.body.rewardAmount,
-        rewardType: req.body.rewardType,
         published: req.body.published
     };
 
@@ -158,8 +156,7 @@ const searchStudy = async (req, res) => {
         city: req.query.city,
         zip: req.query.zip,
         organizer: req.query.organizer,
-        minReward: req.query.minReward,
-        rewardType: req.query.rewardType
+        minReward: req.query.minReward
     };
 
     const Op = Sequelize.Op;
@@ -186,12 +183,9 @@ const searchStudy = async (req, res) => {
     if (valuesDict['minReward'] !== undefined) {
         andWhere['rewardAmount'] = {[Op.gte]: valuesDict['minReward']}; // check min reward
     }
-    if (valuesDict['rewardType'] !== undefined) {
-        andWhere['rewardType'] = {[Op.iLike]: valuesDict['rewardType']}; // check reward type
-    }
 
     models.Study.findAll({where: andWhere, include: [{model: models.StudyKeyword, attributes: []}, {model: models.Creator, attributes: ['organizerType']}],
-        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'rewardType']
+        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount']
     })
         .then(results => {
             if (results) {
