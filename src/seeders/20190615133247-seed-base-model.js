@@ -57,11 +57,9 @@ module.exports = {
 
         ], {}).then(() => {
             return queryInterface.bulkInsert('Participants', [{
-                userId: userIds[0],
-                balance: '0'
+                userId: userIds[0]
             }, {
-                userId: userIds[1],
-                balance: '5'
+                userId: userIds[1]
             }
 
             ], {})
