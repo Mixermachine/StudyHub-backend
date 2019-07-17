@@ -5,10 +5,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             foreignKey: true
-        },
-        balance: {
-            type: DataTypes.DOUBLE,
-            defaultValue: 0.0
         }
     }, {
         timestamps: false
