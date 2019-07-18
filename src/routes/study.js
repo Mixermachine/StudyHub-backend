@@ -6,6 +6,8 @@ const router = express.Router();
 const middlewares = require('../middlewares');
 const studyController = require('../controllers/study');
 const timeslotController = require('../controllers/timeslot');
+const keywordController = require('../controllers/keyword');
+
 
 /**
  * @swagger
@@ -556,6 +558,112 @@ router.get('/:studyId/timeslot/:timeslotId/secureCheckin/:token', timeslotContro
  */
 router.get('/:studyId/availableCapacity/', studyController.availableCapacity);
 
+/**
+ * @swagger
+ *
+ * /study/{studyId}/keyword:
+ *   get:
+ *     description: Get all keywords for a study
+ *     tags: [Study]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:studyId/keyword', keywordController.get);
 
+/**
+ * @swagger
+ *
+ * /study/{studyId}/keyword:
+ *   post:
+ *     description: Create one or many keywords for a study
+ *     tags: [Study]
+ *     security:
+ *     - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: string
+ *               format: date-time
+ *             required:
+ *               - {keyword}
+ *             properties:
+ *               keyword:
+ *                 type: string
+ *             example: {
+ *               "keywords":[
+ *                 {"keyword":"game"},
+ *                 {"keyword":"computer"}
+ *               ]
+ *             }
+ *     responses:
+ *       200:
+ *         description: created
+ *       501:
+ *         description: not all fields provided
+ */
+router.post('/:studyId/keyword', middlewares.checkAuthentication, keywordController.post);
+
+/**
+ * @swagger
+ *
+ * /study/{studyId}/keyword/{keyword}:
+ *   delete:
+ *     description: Delete a keyword of a study
+ *     tags: [Study]
+ *     security:
+ *     - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: studyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: keyword
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: game
+ *     responses:
+ *       200:
+ *         description: deleted
+ *       404:
+ *         description: not found
+ *       501:
+ *         description: not all fields provided
+ */
+router.delete('/:studyId/keyword/:keyword', middlewares.checkAuthentication, keywordController.remove);
 
 module.exports = router;
