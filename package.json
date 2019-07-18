@@ -17,7 +17,7 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test echo \"Error: no test specified\" && exit 0",
     "start": "cross-env NODE_ENV=production node ./index.js",
-    "devstart": "cross-env NODE_ENV=development nodemon ./index.js",
+    "devstart": "cross-env NODE_ENV=development node ./index.js",
     "db_reset": "cross-env NODE_ENV=development sequelize db:drop && sequelize db:create",
     "db_seed": "cross-env NODE_ENV=development sequelize db:seed:all"
   },
