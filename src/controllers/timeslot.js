@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const config = require('../config').config;
 const participant = require('./participant');
 const study = require('./study');
+const notifier = require('../notifier');
+const messageTemplate = require('../messageTemplateProvider');
 
 const get = (req, res) => {
     const studyId = req.params.studyId;
@@ -104,7 +106,7 @@ const put = async (req, res) => {
     }
 
     study.getAvailableCapacity(studyId)
-        .then(async availableCapacity => {
+        .then(availableCapacity => {
 
             if (availableCapacity === null || availableCapacity === undefined) {
                 return helper.sendJsonResponse(res, 404, "Study not found",
@@ -122,20 +124,6 @@ const put = async (req, res) => {
                 req.body.participantId = null;
             }
 
-            // check if participantId links to a participant
-            if (!(req.body.participantId === undefined || req.body.participantId === null)) {
-                let isParticipant = false;
-
-                // wait for query as we are in a if branch, we need to directly await result
-                await participant.isParticipant(req.body.participantId).then(result => {
-                    isParticipant = result;
-                });
-
-                if (!isParticipant) {
-                    return helper.sendJsonResponse(res, 404, "ParticipantId not found",
-                        "User with id " + req.body.participantId + " is not a participant.");
-                }
-            }
 
             models.Study.findByPk(studyId)
                 .then(study => {
@@ -156,15 +144,36 @@ const put = async (req, res) => {
 
                     // if public user check values first
                     if (study.creatorId !== req.id &&
-                        (Object.keys(timeslotUpdate).length !== 1 || timeslotUpdate.participantId !== req.id)) {
+                        (Object.keys(timeslotUpdate).length !== 2 || timeslotUpdate.participantId !== req.id)) {
                         return helper.sendJsonResponse(res, 401, "Unauthorized",
                             "If you are not the study creator your put should only contain the " +
-                            "field participantId with your own id.");
+                            "field participantId and payoutMethodId with your own id.");
                     }
 
                     study.getTimeslots({where: {id: timeslotId}})
-                        .then(timeslots => {
+                        .then(async timeslots => {
                             const timeslot = timeslots[0];
+
+                            let previousParticipantId = null;
+
+                            // check if participantId links to a participant
+                            if (!(req.body.participantId === undefined || req.body.participantId === null)) {
+                                let isParticipant = false;
+
+                                // wait for query as we are in a if branch, we need to directly await result
+                                await participant.isParticipant(req.body.participantId).then(result => {
+                                    isParticipant = result;
+                                });
+
+                                // if is not return
+                                if (!isParticipant) {
+                                    return helper.sendJsonResponse(res, 404, "ParticipantId not found",
+                                        "User with id " + req.body.participantId + " is not a participant.");
+                                }
+
+                                // if it is, save previous participant
+                                previousParticipantId = timeslot.participantId;
+                            }
 
                             // check if empty participantId is possible
                             if (timeslot.attended) {
@@ -175,7 +184,20 @@ const put = async (req, res) => {
 
                             Object.assign(timeslot, timeslotUpdate);
                             timeslot.save()
-                                .then(() => res.status(200).send())
+                                .then(() => res.status(200).send());
+
+                            // notify users
+                            if (timeslot.participantId) {
+                                notifier.notifyUserWithTemplate(timeslot.participantId,
+                                    messageTemplate.studyHasBeenBooked({study: study, timeslot: timeslot}));
+                            }
+
+                            if (previousParticipantId) {
+                                notifier.notifyUserWithTemplate(previousParticipantId,
+                                    messageTemplate.studyHasBeenUnBooked({study: study, timeslot: timeslot}));
+                            }
+
+
                         });
                 })
                 .catch(error =>
