@@ -6,6 +6,7 @@ const logger = require('./../logger');
 const helper = require('./helper');
 const creator = require('./creator');
 const payee = require('./payee');
+const timeslot = require('./timeslot');
 const Sequelize = require('sequelize');
 
 const get = (req, res) => {
@@ -140,7 +141,7 @@ const put = async (req, res) => {
     });
 
     // update fields
-    models.Study.update(valuesDict, {where:{id:id}})
+    models.Study.update(valuesDict, {where: {id: id}})
         .then(res.status(200).send())
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
             env.maskMsgIfNotDev(error.message)));
@@ -184,12 +185,39 @@ const searchStudy = async (req, res) => {
         andWhere['rewardAmount'] = {[Op.gte]: valuesDict['minReward']}; // check min reward
     }
 
-    models.Study.findAll({where: andWhere, include: [{model: models.StudyKeyword, attributes: []}, {model: models.Creator, attributes: ['organizerType']}],
-        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount']
+    models.Study.findAll({
+        where: andWhere,
+        include: [{model: models.StudyKeyword, attributes: []}, {model: models.Creator, attributes: ['organizerType']}],
+        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street',
+            'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount']
     })
         .then(results => {
             if (results) {
-                res.status(200).json(results);
+
+                // Add information for front end to result.
+                // Not 100% ideal but reduces backend calls by the front end from 1 + 3 * x to 1
+                // (x being the count of the result of the study search)
+                const promises = [];
+
+                // Amount available timeslots
+                results.forEach(study => {
+                    promises.push(getAvailableCapacity(study.id)
+                        .then(result => {
+                            study.dataValues.availableCapacity = result
+                        }));
+                });
+
+                // Size of timeslot
+                results.forEach(study => {
+                    promises.push(timeslot.getDurationOfTimeslotForStudy(study.id)
+                        .then(result => {
+                            study.dataValues.timeslotDuration = result
+                        }));
+                });
+
+                Promise.all(promises)
+                    .then(() =>
+                        res.status(200).json(results));
             }
         })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",

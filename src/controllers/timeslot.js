@@ -296,10 +296,29 @@ const secretCheckin = (req, res) => {
     });
 };
 
+const getDurationOfTimeslotForStudy = (studyId) => {
+    return models.Study.findByPk(studyId)
+        .then(study => {
+            if (study) {
+                return study.getTimeslots()
+                    .then(timeslots => {
+                        if (timeslots.length > 0) {
+                            return timeslots[0].stop - timeslots[0].start;
+                        }
+                    })
+            }
+
+            return 0;
+        })
+};
+
+
+
 module.exports = {
     get,
     post,
     put,
     generateSecretCheckin,
-    secretCheckin
+    secretCheckin,
+    getDurationOfTimeslotForStudy
 };
