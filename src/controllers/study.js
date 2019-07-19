@@ -17,7 +17,7 @@ const get = (req, res) => {
     }
 
     models.Study.findByPk(studyId, {
-        attributes: ['title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
+        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
             'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId']
     }).then(study => {
         if (!study || !study.published) {
@@ -30,7 +30,7 @@ const get = (req, res) => {
             study.creatorId = study.payeeId = "hidden";
         }
 
-        res.status(200).json(study);
+        addDurationAndCapacityAndReturn(res, study);
     });
 };
 
@@ -193,31 +193,7 @@ const searchStudy = async (req, res) => {
     })
         .then(results => {
             if (results) {
-
-                // Add information for front end to result.
-                // Not 100% ideal but reduces backend calls by the front end from 1 + 3 * x to 1
-                // (x being the count of the result of the study search)
-                const promises = [];
-
-                // Amount available timeslots
-                results.forEach(study => {
-                    promises.push(getAvailableCapacity(study.id)
-                        .then(result => {
-                            study.dataValues.availableCapacity = result
-                        }));
-                });
-
-                // Size of timeslot
-                results.forEach(study => {
-                    promises.push(timeslot.getDurationOfTimeslotForStudy(study.id)
-                        .then(result => {
-                            study.dataValues.timeslotDuration = result
-                        }));
-                });
-
-                Promise.all(promises)
-                    .then(() =>
-                        res.status(200).json(results));
+                addDurationAndCapacityAndReturn(res, results);
             }
         })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
@@ -266,11 +242,54 @@ const availableCapacity = (req, res) => {
         })
 };
 
+const addDurationAndCapacityAndReturn = (res, studies) => {
+
+// Add information for front end to result.
+// Not 100% ideal but reduces backend calls by the front end from 1 + 3 * x to 1
+// (x being the count of the result of the study search)
+    const promises = [];
+
+    if (studies instanceof Array) {
+        studies.forEach(study => {
+            addAvailableCapacity(study, promises);
+        });
+
+        studies.forEach(study => {
+            addDuration(study, promises);
+        });
+
+    } else {
+        addAvailableCapacity(studies, promises);
+        addDuration(studies, promises);
+    }
+
+    Promise.all(promises)
+        .then(() =>
+            res.status(200).json(studies));
+};
+
+const addDuration = (study, promises) => {
+    promises.push(timeslot.getDurationOfTimeslotForStudy(study.id)
+        .then(result => {
+            study.dataValues.timeslotDuration = result
+        }));
+}
+
+const addAvailableCapacity = (study, promises) => {
+    promises.push(getAvailableCapacity(study.id)
+        .then(result => {
+            study.dataValues.availableCapacity = result
+        }));
+}
+
+
+
 module.exports = {
     get,
     post,
     put,
     searchStudy,
     getAvailableCapacity,
-    availableCapacity
+    availableCapacity,
+    addDurationAndCapacityAndReturn
 };

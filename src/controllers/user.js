@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const helper = require('./helper');
 const logger = require('../logger.js')(__filename.split(/[\\/]/).slice(-2).join('/'));
+const studyController = require('../controllers/study');
 
 const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) {
@@ -178,8 +179,56 @@ const put = async (req, res) => {
         });
 };
 
+const getAppliedStudies = (req, res) => {
+    const userId = req.params.userId;
+    if (userId === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't get applied studies for user without user id");
+    }
+
+    if (parseInt(userId) !== req.id) {
+        return helper.sendJsonResponse(res, 401, "Unauthorized",
+            "You can not access user data of other users");
+    }
+
+    models.Timeslot.findAll( {
+        where: {participantId: userId},
+        attributes: ['studyId', 'participantId', 'start', 'stop', 'attended', 'payoutMethodId'],
+        include: [{model: models.Study, attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
+                'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published']}]
+    }).then(result => {
+        res.status(200).json(result);
+    });
+};
+
+const getCreatedStudies = (req, res) => {
+    const userId = req.params.userId;
+    if (userId === undefined) {
+        return helper.sendJsonResponse(res, 422, "Parameter id is missing",
+            "Can't get applied studies for user without user id");
+    }
+
+    if (parseInt(userId) !== req.id) {
+        return helper.sendJsonResponse(res, 401, "Unauthorized",
+            "You can not access user data of other users");
+    }
+
+    models.Study.findAll( {
+        where: {creatorId: userId},
+        attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
+            'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId']
+    }).then(results => {
+        if (results) {
+            studyController.addDurationAndCapacityAndReturn(res, results);
+        }
+    });
+};
+
+
 module.exports = {
     create,
     get,
-    put
+    put,
+    getAppliedStudies,
+    getCreatedStudies
 };
