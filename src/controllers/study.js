@@ -20,7 +20,7 @@ const get = (req, res) => {
         attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
             'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId']
     }).then(study => {
-        if (!study || !study.published) {
+        if (!study || (!study.published && req.id !== study.creatorId)) {
             return helper.sendJsonResponse(res, 404, "Not found",
                 "Study with id " + studyId + " was not found")
         }
