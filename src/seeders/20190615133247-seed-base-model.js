@@ -174,7 +174,7 @@ module.exports = {
         }).then(() => {
             return queryInterface.bulkInsert('RewardTypes', [{
                 id: rewardTypeIds[0],
-                name: 'Paypal'
+                name: 'PayPal'
             }, {
                 id: rewardTypeIds[1],
                 name: 'IBAN'
