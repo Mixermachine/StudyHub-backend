@@ -450,7 +450,7 @@ router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, t
 /**
  * @swagger
  *
- * /study/{studyId}/timeslot/{timeslotId}/generateSecureCheckin:
+ * /study/{studyId}/timeslot/{timeslotId}/generate-secure-checkin:
  *   get:
  *     description: Generate
  *     tags: [Study]
@@ -479,13 +479,13 @@ router.put('/:studyId/timeslot/:timeslotId/', middlewares.checkAuthentication, t
  *       501:
  *         description: not all fields provided
  */
-router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.checkAuthentication,
+router.get('/:studyId/timeslot/:timeslotId/generate-secure-checkin', middlewares.checkAuthentication,
     timeslotController.generateSecretCheckin);
 
 /**
  * @swagger
  *
- * /study/{studyId}/timeslot/{timeslotId}/secureCheckin/{token}:
+ * /study/{studyId}/timeslot/{timeslotId}/secure-checkin/{token}:
  *   get:
  *     description: Generate
  *     tags: [Study]
@@ -518,12 +518,12 @@ router.get('/:studyId/timeslot/:timeslotId/generateSecureCheckin', middlewares.c
  *       501:
  *         description: not all fields provided
  */
-router.get('/:studyId/timeslot/:timeslotId/secureCheckin/:token', timeslotController.secretCheckin);
+router.get('/:studyId/timeslot/:timeslotId/secure-checkin/:token', timeslotController.secretCheckin);
 
 /**
  * @swagger
  *
- * /study/{studyId}/availableCapacity/:
+ * /study/{studyId}/available-capacity/:
  *   get:
  *     description: Get available capacity of study.
  *     tags: [Study]
@@ -542,7 +542,7 @@ router.get('/:studyId/timeslot/:timeslotId/secureCheckin/:token', timeslotContro
  *       422:
  *         description: not all fields provided
  */
-router.get('/:studyId/availableCapacity/', studyController.availableCapacity);
+router.get('/:studyId/available-capacity/', studyController.availableCapacity);
 
 /**
  * @swagger
