@@ -195,7 +195,8 @@ const getAppliedStudies = (req, res) => {
         where: {participantId: userId},
         attributes: ['studyId', 'participantId', 'start', 'stop', 'attended', 'payoutMethodId'],
         include: [{model: models.Study, attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
-                'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published']}]
+                'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published']}],
+        order: [[models.Study, 'createdOn', 'DESC']]
     }).then(result => {
         res.status(200).json(result);
     });
@@ -216,7 +217,8 @@ const getCreatedStudies = (req, res) => {
     models.Study.findAll( {
         where: {creatorId: userId},
         attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street', 'number',
-            'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId']
+            'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId'],
+        order: [['createdOn', 'DESC']]
     }).then(results => {
         if (results) {
             studyController.addDurationAndCapacityAndReturn(results).then(() => {

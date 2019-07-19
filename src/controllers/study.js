@@ -60,6 +60,8 @@ const post = async (req, res) => {
         payeeId: req.body.payeeId
     };
 
+    valuesDict['createdOn'] = Date.now();
+
     // Check if all fields are present
     // forEach can not break without exception, thus we have to check afterwards
     let incomplete = false;
@@ -191,7 +193,8 @@ const searchStudy = async (req, res) => {
         where: andWhere,
         include: [{model: models.StudyKeyword, attributes: []}, {model: models.Creator, attributes: ['organizerType']}],
         attributes: ['id', 'title', 'description', 'prerequisites', 'capacity', 'country', 'city', 'zip', 'street',
-            'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount']
+            'number', 'additionalLocationInfo', 'rewardCurrency', 'rewardAmount'],
+        order: [['createdOn', 'DESC']]
     })
         .then(results => {
             if (results) {
