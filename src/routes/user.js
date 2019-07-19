@@ -529,4 +529,60 @@ router.get('/:userId/payout-method/:payoutMethodId', middlewares.checkAuthentica
  */
 router.put('/:userId/payout-method/:payoutMethodId', middlewares.checkAuthentication, payoutMethodController.put);
 
+/**
+ * @swagger
+ *
+ * /user/{userId}/applied-studies:
+ *   get:
+ *     description: Get data of logged in user.
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:userId/applied-studies', middlewares.checkAuthentication, userController.getAppliedStudies);
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/created-studies:
+ *   get:
+ *     description: Get created studies of a user
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:userId/created-studies', middlewares.checkAuthentication, userController.getCreatedStudies);
+
 module.exports = router;
