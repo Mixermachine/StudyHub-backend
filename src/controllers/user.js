@@ -219,7 +219,9 @@ const getCreatedStudies = (req, res) => {
             'additionalLocationInfo', 'rewardCurrency', 'rewardAmount', 'published', 'creatorId', 'payeeId']
     }).then(results => {
         if (results) {
-            studyController.addDurationAndCapacityAndReturn(res, results);
+            studyController.addDurationAndCapacityAndReturn(results).then(() => {
+                res.status(200).json(results);
+            });
         }
     });
 };

@@ -30,7 +30,9 @@ const get = (req, res) => {
             study.creatorId = study.payeeId = "hidden";
         }
 
-        addDurationAndCapacityAndReturn(res, study);
+        addDurationAndCapacityAndReturn(study).then(() => {
+            res.status(200).json(study);
+        });
     });
 };
 
@@ -193,7 +195,9 @@ const searchStudy = async (req, res) => {
     })
         .then(results => {
             if (results) {
-                addDurationAndCapacityAndReturn(res, results);
+                addDurationAndCapacityAndReturn(results).then(() => {
+                    res.status(200).json(results);
+                });
             }
         })
         .catch(error => helper.sendJsonResponse(res, 500, "Internal server error",
@@ -242,11 +246,10 @@ const availableCapacity = (req, res) => {
         })
 };
 
-const addDurationAndCapacityAndReturn = (res, studies) => {
-
-// Add information for front end to result.
-// Not 100% ideal but reduces backend calls by the front end from 1 + 3 * x to 1
-// (x being the count of the result of the study search)
+const addDurationAndCapacityAndReturn = (studies) => {
+    // Add information for front end to result.
+    // Not 100% ideal but reduces backend calls by the front end from 1 + 3 * x to 1
+    // (x being the count of the result of the study search)
     const promises = [];
 
     if (studies instanceof Array) {
@@ -263,9 +266,7 @@ const addDurationAndCapacityAndReturn = (res, studies) => {
         addDuration(studies, promises);
     }
 
-    Promise.all(promises)
-        .then(() =>
-            res.status(200).json(studies));
+    return Promise.all(promises);
 };
 
 const addDuration = (study, promises) => {
