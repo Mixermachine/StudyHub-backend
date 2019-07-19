@@ -33,6 +33,7 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.8.11",
     "sequelize-cli": "^5.5.0",
+    "sequelize-log-syntax-colors": "^2.0.0",
     "sqlite3": "^4.0.9",
     "swagger-jsdoc": "^3.2.9",
     "swagger-ui-express": "^4.0.6",

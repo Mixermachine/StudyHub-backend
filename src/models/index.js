@@ -3,12 +3,17 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
+const Colors = require('sequelize-log-syntax-colors');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config_sequelize = require(__dirname + '/../../config/config_sequelize.json')[env];
 const db = {};
 
 let sequelize;
+
+// Add coloring to sequelize log
+config_sequelize.logging = (text) => console.log(Colors(text));
+
 // Load config
 if (config_sequelize.use_env_variable) {
     sequelize = new Sequelize(process.env[config_sequelize.use_env_variable],
