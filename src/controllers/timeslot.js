@@ -283,10 +283,16 @@ const secretCheckin = (req, res) => {
                     study.getTimeslots({where: {id: timeslotId}})
                         .then(timeslots => {
                             if (timeslots) {
-                                timeslots[0].attended = true;
-                                timeslots[0].save()
-                                    .then(() => res.status(200)
-                                        .json({message: "Timeslot has been marked attended successfully."}));
+                                const timeslot = timeslots[0];
+                                timeslot.attended = true;
+                                timeslot.save()
+                                    .then(() => {
+                                        res.status(200)
+                                            .json({message: "Timeslot has been marked attended successfully."});
+
+                                        notifier.notifyUserWithTemplate(timeslot.participantId,
+                                            messageTemplate.payoutMessage({study: study, timeslot: timeslot}));
+                                    });
                             }
                         });
                 }

@@ -36,7 +36,8 @@ const notifyUserWithTemplate = (userId, template) => {
     return getUser(userId)
         .then(user => {
             if (user) {
-                logger.info("Notifying user " + user.id + " about subject: " + template.subject);
+                logger.info("Notifying user " + user.id + " about subject: " + template.subject + "\n" +
+                    "message: " + template.message);
                 sendTemplateEmail(user.email, template);
             }
         })
