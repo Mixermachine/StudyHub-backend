@@ -15,7 +15,7 @@ const server = http.createServer(api);
 
 // Fire up sequelize for database connection and synchronize database schema
 db.sequelize.sync()
-    .then(server.listen(config.port));
+    .then(() => server.listen(config.port));
 
 
 server.on('listening', () => {
