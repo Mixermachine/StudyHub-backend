@@ -7,6 +7,8 @@ const saltRounds = 10;
 const helper = require('./helper');
 const logger = require('../logger.js')(__filename.split(/[\\/]/).slice(-2).join('/'));
 const studyController = require('../controllers/study');
+const timeslot = require('./timeslot');
+const creator = require('./creator');
 
 const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) {
@@ -77,24 +79,39 @@ const get = async (req, res) => {
         id = req.id;  // get id from caller
     }
 
-    if (id !== req.id) {
-        logger.infoWithUuid(req, "User unauthorized");
-        return helper.sendJsonResponse(res, 401, "Unauthorized",
-            "You can not access user data of other users");
+    // turn string into id to make comparison later easier
+    id = parseInt(id);
+
+    let returnFields =   ['firstName', 'lastName', 'DoB', 'gender'];
+
+    if (id !== req.id) {  // check if requester is creator and if his studies contain the user
+        let allowedParticipantIds = [];
+
+        await creator.isCreator(req.id).then(result => {
+            if (result) {
+                return timeslot.getParticipantsOfStudiesOfCreator(req.id)
+                    .then(result => allowedParticipantIds = result);
+            }
+        });
+
+        if (!allowedParticipantIds.includes(id)) { // else continue
+            logger.infoWithUuid(req, "User unauthorized");
+            return helper.sendJsonResponse(res, 401, "Unauthorized",
+                "You can only access your own data or data from participants " +
+                "which have been booked into you studies");
+        }
+    } else {
+        // if user requests his own data (or later a admin requests data), return full
+        returnFields =  ['id', 'firstName', 'lastName', 'DoB', 'gender', 'email', 'createdOn', 'modifiedOn'];
     }
 
     models.User.findByPk(id, {
-        attributes: ['id', 'firstName', 'lastName', 'DoB', 'gender', 'email', 'createdOn', 'modifiedOn']
+        attributes: returnFields
     }).then(user => {
         if (!user) {
             logger.infoWithUuid(req, "Id " + id + " not found");
             return helper.sendJsonResponse(res, 404, "Not found",
                 "User with id " + id + " was not found")
-        }
-
-        // email should only be visible to user who is logged in
-        if (!(req.auth && req.id === user.id)) {
-            user.email = user.createdOn = user.modifiedOn = "hidden";
         }
 
         logger.infoWithUuid(req, "User " + id + " returned");
