@@ -312,6 +312,23 @@ const getDurationOfTimeslotForStudy = (studyId) => {
         })
 };
 
+const getParticipantsOfStudiesOfCreator = (creatorId) => {
+    return models.Study.findAll({where: {creatorId: creatorId}})
+        .then(studies => {
+            if (studies) {
+                const promises = studies.map(study => study.getTimeslots());
+                return Promise.all(promises);
+            }
+
+            return [];
+        }).then(studiesTimeslots =>
+            studiesTimeslots.flat().reduce((list, timeslot) => {
+                if (timeslot.participantId) {
+                    list.push(timeslot.participantId);
+                }
+                return list;
+            }, []));
+};
 
 
 module.exports = {
@@ -320,5 +337,6 @@ module.exports = {
     put,
     generateSecretCheckin,
     secretCheckin,
-    getDurationOfTimeslotForStudy
+    getDurationOfTimeslotForStudy,
+    getParticipantsOfStudiesOfCreator
 };
