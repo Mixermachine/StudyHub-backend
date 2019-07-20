@@ -32,8 +32,8 @@ const payoutMessage = (options) => {
     template.subject = "You received a reward for participating in a study";
     template.message = "You just received a reward of " + options.study.rewardAmount + " " +
         getSymbolFromCurrency(options.study.rewardCurrency) + ".\n" +
-        "This reward belongs to the timeslot from " + options.timeslot.start + " to " + options.timeslot.stop +
-        " of the study " + options.study.title + ".\n" +
+        "This reward belongs to the timeslot from " + options.timeslot.start.toUTCString() + " to "
+        + options.timeslot.stop.toUTCString() + " of the study " + options.study.title + ".\n" +
         "Your reward will be payed out via your entered payout variant.\n" +
         greeting;
     return template;
