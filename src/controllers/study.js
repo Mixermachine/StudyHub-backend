@@ -6,8 +6,18 @@ const logger = require('./../logger');
 const helper = require('./helper');
 const creator = require('./creator');
 const payee = require('./payee');
-const timeslot = require('./timeslot');
 const Sequelize = require('sequelize');
+
+// prevent cycle dependency
+let timeslot = undefined;
+
+const getTimeslotObj = () => {
+    if (!timeslot) {
+        timeslot = require('./timeslot');
+    }
+
+    return timeslot;
+};
 
 const get = (req, res) => {
     const studyId = req.params.studyId;
@@ -273,18 +283,18 @@ const addDurationAndCapacityAndReturn = (studies) => {
 };
 
 const addDuration = (study, promises) => {
-    promises.push(timeslot.getDurationOfTimeslotForStudy(study.id)
+    promises.push(getTimeslotObj().getDurationOfTimeslotForStudy(study.id)
         .then(result => {
             study.dataValues.timeslotDuration = result
         }));
-}
+};
 
 const addAvailableCapacity = (study, promises) => {
     promises.push(getAvailableCapacity(study.id)
         .then(result => {
             study.dataValues.availableCapacity = result
         }));
-}
+};
 
 
 
