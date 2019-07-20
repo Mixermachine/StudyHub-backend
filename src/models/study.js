@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
         additionalLocationInfo: DataTypes.STRING,
         rewardCurrency: DataTypes.STRING(3),
         rewardAmount: DataTypes.DOUBLE,
-        published: DataTypes.BOOLEAN
+        published: DataTypes.BOOLEAN,
+        createdOn: DataTypes.DATE
     }, {
         timestamps: false
     });

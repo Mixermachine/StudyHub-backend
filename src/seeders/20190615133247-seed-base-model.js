@@ -100,7 +100,8 @@ module.exports = {
                 rewardAmount: "5.0",
                 published: 'true',
                 creatorId: userIds[2],
-                payeeId: userIds[2]
+                payeeId: userIds[2],
+                createdOn: '2019-06-20 12:18:12'
             }, {
                 id: studyIds[1],
                 title: 'Study to find good computer games!',
@@ -117,7 +118,8 @@ module.exports = {
                 rewardAmount: "10.0",
                 published: 'true',
                 creatorId: userIds[3],
-                payeeId: userIds[3]
+                payeeId: userIds[3],
+                createdOn: '2019-06-21 12:18:12'
             }, {
                 id: studyIds[2],
                 title: 'Games and friends',
@@ -136,7 +138,8 @@ module.exports = {
                 rewardAmount: "7.5",
                 published: 'true',
                 creatorId: userIds[2],
-                payeeId: userIds[3]
+                payeeId: userIds[3],
+                createdOn: '2019-06-22 12:18:12'
             }
 
             ], {})
