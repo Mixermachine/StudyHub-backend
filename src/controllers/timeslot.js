@@ -277,18 +277,26 @@ const secretCheckin = (req, res) => {
                 "The encrypted ids in the token did not match the provided ids in the url.");
         }
 
-        models.Study.findByPk(studyId)
+        models.Study.findByPk(studyId, {attributes: ['id', 'title', 'description']})
             .then((study) => {
                 if (study) {
-                    study.getTimeslots({where: {id: timeslotId}})
+                    study.getTimeslots({where: {id: timeslotId}, })
                         .then(timeslots => {
                             if (timeslots) {
                                 const timeslot = timeslots[0];
                                 timeslot.attended = true;
                                 timeslot.save()
                                     .then(() => {
-                                        res.status(200)
-                                            .json({message: "Timeslot has been marked attended successfully."});
+
+                                        models.User.findByPk(timeslot.participantId,
+                                            {attributes: ['id', 'firstName', 'lastName']})
+                                            .then(user =>
+                                                res.status(200)
+                                                    .json({
+                                                        message: "Timeslot has been marked attended successfully.",
+                                                        study: study, timeslot: timeslot, user: user
+                                                    })
+                                            );
 
                                         notifier.notifyUserWithTemplate(timeslot.participantId,
                                             messageTemplate.payoutMessage({study: study, timeslot: timeslot}));
@@ -317,7 +325,6 @@ const getDurationOfTimeslotForStudy = (studyId) => {
             return 0;
         })
 };
-
 
 
 module.exports = {
