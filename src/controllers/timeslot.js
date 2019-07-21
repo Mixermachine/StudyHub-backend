@@ -260,7 +260,7 @@ const generateSecretCheckin = (req, res) => {
                                 expiresIn: 20 // expires in 20 seconds
                             });
 
-                            res.status(200).json({token: token});
+                            res.status(200).json({secretToken: token});
                         }
                     })
             }

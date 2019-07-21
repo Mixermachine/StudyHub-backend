@@ -2,7 +2,7 @@
 
 const models = require('../models');
 const env = require('../environment');
-const logger = require('./../logger');
+const logger = require('./../logger')('study');
 const helper = require('./helper');
 const creator = require('./creator');
 const payee = require('./payee');
