@@ -277,16 +277,36 @@ const secretCheckin = (req, res) => {
                 "The encrypted ids in the token did not match the provided ids in the url.");
         }
 
-        models.Study.findByPk(studyId)
+        models.Study.findByPk(studyId, {attributes: ['id', 'title', 'description']})
             .then((study) => {
                 if (study) {
                     study.getTimeslots({where: {id: timeslotId}})
                         .then(timeslots => {
                             if (timeslots) {
-                                timeslots[0].attended = true;
-                                timeslots[0].save()
-                                    .then(() => res.status(200)
-                                        .json({message: "Timeslot has been marked attended successfully."}));
+                                const timeslot = timeslots[0];
+
+                                if (timeslot.attended) {
+                                    return helper.sendJsonResponse(res, 405, "Not allowed",
+                                        "This slot has already been attended");
+                                }
+
+                                timeslot.attended = true;
+                                timeslot.save()
+                                    .then(() => {
+
+                                        models.User.findByPk(timeslot.participantId,
+                                            {attributes: ['id', 'firstName', 'lastName']})
+                                            .then(user =>
+                                                res.status(200)
+                                                    .json({
+                                                        message: "Timeslot has been marked attended successfully.",
+                                                        study: study, timeslot: timeslot, user: user
+                                                    })
+                                            );
+
+                                        notifier.notifyUserWithTemplate(timeslot.participantId,
+                                            messageTemplate.payoutMessage({study: study, timeslot: timeslot}));
+                                    });
                             }
                         });
                 }
@@ -329,7 +349,6 @@ const getParticipantsOfStudiesOfCreator = (creatorId) => {
                 return list;
             }, []));
 };
-
 
 module.exports = {
     get,
