@@ -40,7 +40,6 @@ api.use('/auth', auth);
 api.use('/user', user);
 api.use('/study', study);
 api.use('/reward', reward);
-//api.use('/movies', movie);
 
 // finally, setup swagger
 swaggerDoc(api);

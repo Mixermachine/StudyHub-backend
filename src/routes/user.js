@@ -13,7 +13,6 @@ const participantController = require('../controllers/participant');
 const payoutMethodController = require('../controllers/payoutMethod');
 const paymentMethodController = require('../controllers/paymentMethod');
 
-//router.post('/', middlewares.checkAuthentication, userController.create); // Create a new movie
 
 /**
  * @swagger
