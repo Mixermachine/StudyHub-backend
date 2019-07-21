@@ -124,9 +124,8 @@ const put = async (req, res) => {
                 req.body.participantId = null;
             }
 
-
             models.Study.findByPk(studyId)
-                .then(study => {
+                .then(async study => {
                     const timeslotUpdate = req.body;
 
                     // studyId should not be changed.
@@ -144,11 +143,25 @@ const put = async (req, res) => {
 
                     // if public user check values first
                     if (study.creatorId !== req.id &&
-                        (Object.keys(timeslotUpdate).length !== 2 || timeslotUpdate.participantId !== req.id)) {
+                        (Object.keys(timeslotUpdate).length !== 2 || timeslotUpdate.participantId !== req.id ||
+                            timeslotUpdate.payoutMethodId === undefined || timeslotUpdate.payoutMethodId === null)) {
                         return helper.sendJsonResponse(res, 401, "Unauthorized",
-                            "If you are not the study creator your put should only contain the " +
-                            "field participantId and payoutMethodId with your own id.");
+                            "If you are not the study creator your put should contain the " +
+                            "fields participantId and payoutMethodId with your own id.");
                     }
+
+                    // check if PayoutMethod really exists
+                    if (study.creatorId !== req.id &&
+                        !(timeslotUpdate.payoutMethodId === undefined || timeslotUpdate.payoutMethodId === null)) {
+                        let isValid = false;
+                        await models.PayoutMethod.findByPk(timeslotUpdate.payoutMethodId)
+                            .then(method => isValid = !!method);
+
+                        if (!isValid) {
+                            return helper.sendJsonResponse(res, 404, "Not found", "Payoutmethod not found");
+                        }
+                    }
+
 
                     study.getTimeslots({where: {id: timeslotId}})
                         .then(async timeslots => {
@@ -182,22 +195,26 @@ const put = async (req, res) => {
                                     "The participantId can't be changed after the timeslot has been attended.");
                             }
 
+
                             Object.assign(timeslot, timeslotUpdate);
                             timeslot.save()
-                                .then(() => res.status(200).send());
+                                .then(() => {
+                                    res.status(200).send();
 
-                            // notify users
-                            if (timeslot.participantId) {
-                                notifier.notifyUserWithTemplate(timeslot.participantId,
-                                    messageTemplate.studyHasBeenBooked({study: study, timeslot: timeslot}));
-                            }
+                                    // notify users
+                                    if (timeslot.participantId) {
+                                        notifier.notifyUserWithTemplate(timeslot.participantId,
+                                            messageTemplate.studyHasBeenBooked({study: study, timeslot: timeslot}));
+                                    }
 
-                            if (previousParticipantId) {
-                                notifier.notifyUserWithTemplate(previousParticipantId,
-                                    messageTemplate.studyHasBeenUnBooked({study: study, timeslot: timeslot}));
-                            }
-
-
+                                    if (previousParticipantId) {
+                                        notifier.notifyUserWithTemplate(previousParticipantId,
+                                            messageTemplate.studyHasBeenUnBooked({study: study, timeslot: timeslot}));
+                                    }
+                                }).catch(err => {
+                                helper.sendJsonResponse(res, 500, "Internal server error",
+                                    env.maskMsgIfNotDev(err.message));
+                            });
                         });
                 })
                 .catch(error =>
