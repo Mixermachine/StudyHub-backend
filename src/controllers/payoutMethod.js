@@ -3,7 +3,7 @@
 const generic = require('./genericUserExtension');
 const models = require('../models');
 const env = process.env.NODE_ENV || 'development';
-const logger = require('./../logger');
+const logger = require('./../logger')('payoutMethod');
 const helper = require('./helper');
 
 const create = async (req, res) => {
