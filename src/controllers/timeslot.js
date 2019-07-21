@@ -284,6 +284,12 @@ const secretCheckin = (req, res) => {
                         .then(timeslots => {
                             if (timeslots) {
                                 const timeslot = timeslots[0];
+
+                                if (timeslot.attended) {
+                                    return helper.sendJsonResponse(res, 405, "Not allowed",
+                                        "This slot has already been attended");
+                                }
+
                                 timeslot.attended = true;
                                 timeslot.save()
                                     .then(() => {
