@@ -280,7 +280,7 @@ const secretCheckin = (req, res) => {
         models.Study.findByPk(studyId, {attributes: ['id', 'title', 'description']})
             .then((study) => {
                 if (study) {
-                    study.getTimeslots({where: {id: timeslotId}, })
+                    study.getTimeslots({where: {id: timeslotId}})
                         .then(timeslots => {
                             if (timeslots) {
                                 const timeslot = timeslots[0];
