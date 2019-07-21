@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             foreignKey: true
-        }
+        },
+        info: DataTypes.STRING
     }, {
         timestamps: false
     });

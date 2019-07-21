@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'paymentId'
         });
 
-        PaymentMethod.hasOne(models.PaymentSEPA, {
+        PaymentMethod.hasOne(models.PaymentCreditCard, {
             foreignKey: 'paymentMethodId'
         });
 
