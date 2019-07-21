@@ -11,6 +11,7 @@ const payeeController = require('../controllers/payee');
 const participantController = require('../controllers/participant');
 
 const payoutMethodController = require('../controllers/payoutMethod');
+const paymentMethodController = require('../controllers/paymentMethod');
 
 //router.post('/', middlewares.checkAuthentication, userController.create); // Create a new movie
 
@@ -528,6 +529,85 @@ router.get('/:userId/payout-method/:payoutMethodId', middlewares.checkAuthentica
  *         description: id not provided
  */
 router.put('/:userId/payout-method/:payoutMethodId', middlewares.checkAuthentication, payoutMethodController.put);
+
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/payment-method:
+ *   post:
+ *     description: Create a new payment method
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - kind
+ *               - kindInfo
+ *             properties:
+ *               name:
+ *                 type: string
+ *               kind:
+ *                 type: string
+ *               kindInfo:
+ *                 type: string
+ *             example: {
+ *               "name": "1",
+ *               "kind": "paypal",
+ *               "kindInfo": "paypal@me.com"
+ *             }
+ *     responses:
+ *       200:
+ *         description: created
+ *       400:
+ *         description: not all fields provided
+ */
+router.post('/:userId/payment-method', middlewares.checkAuthentication, paymentMethodController.create);
+
+/**
+ * @swagger
+ *
+ * /user/{userId}/payment-method/:
+ *   get:
+ *     description: Get payment methods of user
+ *     tags: [User]
+ *     security:
+ *     - BearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: created
+ *       401:
+ *         description: unauthorized
+ *       501:
+ *         description: not all fields provided
+ */
+router.get('/:userId/payment-method/', middlewares.checkAuthentication, paymentMethodController.get);
 
 /**
  * @swagger
