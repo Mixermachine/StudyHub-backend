@@ -32,7 +32,7 @@
     "jsonwebtoken": "8.1.1",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^5.8.11",
+    "sequelize": "^5.15.1",
     "sequelize-cli": "^5.5.0",
     "sequelize-log-syntax-colors": "^2.0.0",
     "sqlite3": "^4.0.9",
